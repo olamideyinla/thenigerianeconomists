@@ -1,26 +1,36 @@
-// Middleware runs on the Edge runtime — must not import Prisma or any
-// Node.js-only module. Auth is validated here using only the session
-// cookie + AUTH_SECRET (no database round-trip). Role checks are done
-// server-side inside app/admin/layout.tsx and app/account/layout.tsx.
-import NextAuth from 'next-auth'
-import { authConfig } from './auth.config'
+// Edge middleware — cannot use Prisma or Node.js-only modules.
+// lib/auth.ts uses strategy:'database' (opaque session tokens, not JWTs),
+// so NextAuth's edge auth() cannot validate sessions without a DB call.
+// We check only for the session cookie's existence here; the real
+// authentication + role enforcement happens in the server-side layouts
+// (app/admin/(protected)/layout.tsx, app/account/layout.tsx) which have
+// full database access.
 
-const { auth } = NextAuth(authConfig)
+import { NextRequest, NextResponse } from 'next/server'
 
-export default auth((req) => {
+const SESSION_COOKIE = [
+  '__Secure-next-auth.session-token', // HTTPS (production)
+  'next-auth.session-token',          // HTTP (local dev)
+]
+
+function hasSession(req: NextRequest): boolean {
+  return SESSION_COOKIE.some((name) => !!req.cookies.get(name)?.value)
+}
+
+export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
-  const isLoggedIn = !!req.auth?.user
+  const loggedIn = hasSession(req)
 
-  // Admin routes — redirect unauthenticated users to login
-  if (pathname.startsWith('/admin') && pathname !== '/admin/login' && !isLoggedIn) {
-    return Response.redirect(new URL('/admin/login', req.url))
+  if (pathname.startsWith('/admin') && pathname !== '/admin/login' && !loggedIn) {
+    return NextResponse.redirect(new URL('/admin/login', req.url))
   }
 
-  // Account routes — redirect unauthenticated users to sign-in
-  if (pathname.startsWith('/account') && !isLoggedIn) {
-    return Response.redirect(new URL('/signin', req.url))
+  if (pathname.startsWith('/account') && !loggedIn) {
+    return NextResponse.redirect(new URL('/signin', req.url))
   }
-})
+
+  return NextResponse.next()
+}
 
 export const config = {
   matcher: ['/admin/:path*', '/account/:path*'],
