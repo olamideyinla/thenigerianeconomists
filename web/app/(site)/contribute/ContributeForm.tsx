@@ -1,39 +1,49 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
+import dynamic from 'next/dynamic'
+
+// SSR disabled — Tiptap uses browser APIs (contenteditable, clipboard)
+const RichArticleEditor = dynamic(
+  () => import('@/components/contribute/RichArticleEditor').then(m => m.RichArticleEditor),
+  { ssr: false, loading: () => <div className="contribute-rich-loading">Loading editor…</div> }
+)
 
 interface Props {
   userName: string
   userEmail: string
 }
 
-function countWords(text: string): number {
-  return text.trim().split(/\s+/).filter(Boolean).length
+/** Strip HTML tags and entities, then count whitespace-delimited words. */
+function countWordsHtml(html: string): number {
+  const text = html
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&[a-zA-Z]+;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+  if (!text) return 0
+  return text.split(/\s+/).filter(Boolean).length
 }
 
 export function ContributeForm({ userName, userEmail }: Props) {
   const [headline, setHeadline] = useState('')
   const [deck, setDeck] = useState('')
-  const [body, setBody] = useState('')
+  const [body, setBody] = useState('')   // stores HTML from rich editor
   const [affiliation, setAffiliation] = useState('')
   const [coi, setCoi] = useState('')
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
 
-  const wordCount = countWords(body)
+  const wordCount = countWordsHtml(body)
   const wordCountOk = wordCount >= 800 && wordCount <= 7000
   const canSubmit = headline.trim().length > 0 && deck.trim().length > 0 && body.trim().length > 0 && wordCountOk
 
   const wordCountColor =
-    wordCount === 0 ? 'var(--ink-faint, #bbb)'
-    : wordCount < 800 ? '#b45309'
-    : wordCount > 5000 ? '#b91c1c'
+    wordCount === 0   ? 'var(--ink-faint, #bbb)'
+    : wordCount < 800  ? '#b45309'
+    : wordCount > 7000 ? '#b91c1c'
     : '#15803d'
-
-  const handleBodyChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setBody(e.target.value)
-  }, [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -110,25 +120,19 @@ export function ContributeForm({ userName, userEmail }: Props) {
         <p className="contribute-hint">This appears directly beneath the headline in the published article.</p>
       </div>
 
-      {/* Article body */}
+      {/* Article body — rich text editor */}
       <div className="contribute-field">
         <div className="contribute-label-row">
-          <label className="contribute-label" htmlFor="cf-body">
+          <label className="contribute-label">
             Article <span className="contribute-req">*</span>
           </label>
           <span className="contribute-wordcount" style={{ color: wordCountColor }}>
             {wordCount === 0 ? '800–7,000 words required' : `${wordCount.toLocaleString()} words`}
           </span>
         </div>
-        <textarea
-          id="cf-body"
-          className="contribute-body"
-          value={body}
-          onChange={handleBodyChange}
-          placeholder="Type or paste your article here. Include your argument, evidence, and numbered citations in the form [1], [2], etc. Figures can be described in square brackets, e.g. [Figure 1: GDP growth chart]."
-          required
-          rows={24}
-          spellCheck
+        <RichArticleEditor
+          onChange={setBody}
+          placeholder="Type or paste your article here. Tables and images are preserved. Use [1], [2] for citations."
         />
         {wordCount > 0 && !wordCountOk && (
           <p className="contribute-hint" style={{ color: wordCountColor }}>

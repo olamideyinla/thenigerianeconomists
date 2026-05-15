@@ -31,13 +31,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Article body is required.' }, { status: 400 })
   }
 
-  const wordCount = articleBody.trim().split(/\s+/).filter(Boolean).length
+  // Body may be HTML from the rich editor — strip tags before counting words
+  const plainText = articleBody
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&[a-zA-Z]+;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+  const wordCount = plainText ? plainText.split(/\s+/).filter(Boolean).length : 0
 
   if (wordCount < 800) {
     return NextResponse.json({ error: `Your article is ${wordCount} words. Minimum is 800.` }, { status: 400 })
   }
   if (wordCount > 7000) {
-    return NextResponse.json({ error: `Your article is ${wordCount} words. Maximum is 7,000.` }, { status: 400 })
+    return NextResponse.json({ error: `Your article is ${wordCount.toLocaleString()} words. Maximum is 7,000.` }, { status: 400 })
   }
 
   try {
@@ -71,7 +77,7 @@ export async function POST(req: NextRequest) {
         ${coiDisclosure ? `<p><strong>COI disclosure:</strong> ${coiDisclosure}</p>` : ''}
         <p><strong>Submission ID:</strong> ${submission.id}</p>
         <hr style="border:none;border-top:1px solid #e5e7eb;margin:1.5rem 0"/>
-        <div style="white-space:pre-wrap;font-family:Georgia,serif;line-height:1.75;font-size:15px">${articleBody.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+        <div style="font-family:Georgia,serif;line-height:1.75;font-size:15px">${articleBody.trim()}</div>
       `,
     }).catch((e: unknown) => console.error('[contribute] editor notification failed', e))
 

@@ -1014,6 +1014,98 @@
   border-color: var(--accent, #b45309);
 }
 
+/* ── Rich article editor (Tiptap) ─────────────────────────────── */
+
+.contribute-rich-loading {
+  min-height: 420px;
+  border: 1px solid var(--rule, #ccc);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-faint, #bbb);
+  font-size: 0.875rem;
+}
+
+.contribute-rich-wrap {
+  border: 1px solid var(--rule, #ccc);
+  border-radius: 3px;
+  background: var(--bg, #fff);
+  transition: border-color 0.15s;
+  min-height: 420px;
+}
+
+.contribute-rich-wrap:focus-within {
+  border-color: var(--accent, #b45309);
+}
+
+/* The contenteditable element Tiptap renders */
+.contribute-rich-body {
+  padding: 14px 16px;
+  min-height: 420px;
+  outline: none;
+  font-family: var(--font-body, Georgia, serif);
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--ink, #222);
+}
+
+/* Placeholder */
+.contribute-rich-body.is-editor-empty::before {
+  content: attr(data-placeholder);
+  color: var(--ink-faint, #bbb);
+  pointer-events: none;
+  float: left;
+  height: 0;
+}
+
+/* Inline formatting */
+.contribute-rich-body strong { font-weight: 700; }
+.contribute-rich-body em { font-style: italic; }
+.contribute-rich-body h2 { font-size: 1.25rem; font-weight: 700; margin: 1.5rem 0 0.5rem; }
+.contribute-rich-body h3 { font-size: 1.1rem; font-weight: 700; margin: 1.25rem 0 0.4rem; }
+.contribute-rich-body p { margin: 0 0 1rem; }
+.contribute-rich-body ul,
+.contribute-rich-body ol { margin: 0 0 1rem 1.5rem; }
+.contribute-rich-body li { margin-bottom: 0.25rem; }
+.contribute-rich-body blockquote {
+  border-left: 3px solid var(--accent, #b45309);
+  padding-left: 1rem;
+  color: var(--ink-soft, #555);
+  margin: 1rem 0;
+}
+
+/* Tables */
+.contribute-rich-body table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.25rem 0;
+  font-size: 0.9375rem;
+}
+.contribute-rich-body th,
+.contribute-rich-body td {
+  border: 1px solid var(--rule, #ddd);
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+.contribute-rich-body th {
+  background: #f6f6f4;
+  font-weight: 600;
+}
+.contribute-rich-body tr:nth-child(even) td { background: #fafafa; }
+
+/* Images */
+.contribute-rich-body img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.25rem auto;
+  border-radius: 2px;
+}
+
+/* ── Contribute hint ──────────────────────────────────────────── */
+
 .contribute-hint {
   font-size: 0.8125rem;
   margin: 0.25rem 0 0;
