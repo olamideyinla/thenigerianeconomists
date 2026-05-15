@@ -5,6 +5,7 @@ import { PrismaAdapter } from '@auth/prisma-adapter'
 import { db } from './db'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  trustHost: true,
   adapter: PrismaAdapter(db),
   session: {
     strategy: 'database',
@@ -43,6 +44,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
+    redirect({ url, baseUrl }) {
+      // Allow relative URLs (e.g. /admin)
+      if (url.startsWith('/')) return `${baseUrl}${url}`
+      // Allow same-origin absolute URLs
+      try {
+        if (new URL(url).origin === new URL(baseUrl).origin) return url
+      } catch { /* ignore malformed URLs */ }
+      return baseUrl
+    },
     session({ session, user }) {
       if (session.user) {
         session.user.id = user.id
