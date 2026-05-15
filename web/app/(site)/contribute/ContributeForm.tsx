@@ -22,7 +22,7 @@ export function ContributeForm({ userName, userEmail }: Props) {
   const [error, setError] = useState('')
 
   const wordCount = countWords(body)
-  const wordCountOk = wordCount >= 800 && wordCount <= 5000
+  const wordCountOk = wordCount >= 800 && wordCount <= 7000
   const canSubmit = headline.trim().length > 0 && deck.trim().length > 0 && body.trim().length > 0 && wordCountOk
 
   const wordCountColor =
@@ -117,7 +117,7 @@ export function ContributeForm({ userName, userEmail }: Props) {
             Article <span className="contribute-req">*</span>
           </label>
           <span className="contribute-wordcount" style={{ color: wordCountColor }}>
-            {wordCount === 0 ? '800–5,000 words required' : `${wordCount.toLocaleString()} words`}
+            {wordCount === 0 ? '800–7,000 words required' : `${wordCount.toLocaleString()} words`}
           </span>
         </div>
         <textarea
@@ -134,7 +134,7 @@ export function ContributeForm({ userName, userEmail }: Props) {
           <p className="contribute-hint" style={{ color: wordCountColor }}>
             {wordCount < 800
               ? `${800 - wordCount} more words needed.`
-              : `${wordCount - 5000} words over the 5,000-word limit.`}
+              : `${wordCount - 7000} words over the 7,000-word limit.`}
           </p>
         )}
       </div>

@@ -36,8 +36,8 @@ export async function POST(req: NextRequest) {
   if (wordCount < 800) {
     return NextResponse.json({ error: `Your article is ${wordCount} words. Minimum is 800.` }, { status: 400 })
   }
-  if (wordCount > 5000) {
-    return NextResponse.json({ error: `Your article is ${wordCount} words. Maximum is 5,000.` }, { status: 400 })
+  if (wordCount > 7000) {
+    return NextResponse.json({ error: `Your article is ${wordCount} words. Maximum is 7,000.` }, { status: 400 })
   }
 
   try {
