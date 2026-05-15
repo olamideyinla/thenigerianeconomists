@@ -8,9 +8,10 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
+// NextAuth v5 (@auth/core) uses the 'authjs' prefix, NOT 'next-auth'.
 const SESSION_COOKIE = [
-  '__Secure-next-auth.session-token', // HTTPS (production)
-  'next-auth.session-token',          // HTTP (local dev)
+  '__Secure-authjs.session-token', // HTTPS (production)
+  'authjs.session-token',          // HTTP (local dev)
 ]
 
 function hasSession(req: NextRequest): boolean {
