@@ -29,9 +29,9 @@ export function MonthlyNewsletter({ unsubscribeUrl, monthLabel, synthesis, topic
 
   return (
     <EmailShell
-      previewText={`Monthly review — ${monthLabel} | The Nigerian Economist`}
+      previewText={`Monthly review — ${monthLabel} | The Nigerian Economists`}
       unsubscribeUrl={unsubscribeUrl}
-      footerNote="You are receiving this because you subscribed to The Nigerian Economist newsletter."
+      footerNote="You are receiving this because you subscribed to The Nigerian Economists newsletter."
     >
       {/* Month header */}
       <Text style={{ fontFamily: F.sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: C.accent, margin: '0 0 4px 0' }}>
@@ -113,7 +113,7 @@ export function MonthlyNewsletter({ unsubscribeUrl, monthLabel, synthesis, topic
       <ContentDivider />
 
       <Text style={{ fontFamily: F.sans, fontSize: 12, color: C.textLight, lineHeight: '1.6', margin: 0 }}>
-        The Nigerian Economist is an independent publication committed to rigorous, evidence-based
+        The Nigerian Economists is an independent publication committed to rigorous, evidence-based
         economic journalism. We do not accept advertising or sponsored content.{' '}
         <Link href={`${BASE_URL}/funders`} style={{ color: C.navy }}>View our funders</Link>.
       </Text>

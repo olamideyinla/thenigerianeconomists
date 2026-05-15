@@ -88,7 +88,7 @@ export function EmailShell({ previewText, children, unsubscribeUrl, footerNote }
             <Row>
               <Column>
                 <Text style={{ fontFamily: F.sans, fontSize: 11, color: 'rgba(255,255,255,0.45)', margin: 0, lineHeight: '1.6' }}>
-                  The Nigerian Economist · Lagos, Nigeria{'\n'}
+                  The Nigerian Economists · Lagos, Nigeria{'\n'}
                   <Link href="https://thenigerianeconomists.com" style={{ color: 'rgba(255,255,255,0.45)' }}>
                     thenigerianeconomists.com
                   </Link>

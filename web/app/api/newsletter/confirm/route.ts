@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
   const unsubscribeUrl = buildUnsubscribeUrl(subscription.email)
   sendEmail({
     to: subscription.email,
-    subject: 'Welcome to The Nigerian Economist',
+    subject: 'Welcome to The Nigerian Economists',
     react: WelcomeEmail({ email: subscription.email, unsubscribeUrl }),
     emailType: 'welcome',
   }).catch((e) => console.error('[newsletter/confirm] welcome email failed', e))

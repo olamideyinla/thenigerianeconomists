@@ -8,12 +8,12 @@ interface Props {
 
 export function MagicLinkEmail({ url, email }: Props) {
   return (
-    <EmailShell previewText="Your sign-in link for The Nigerian Economist">
+    <EmailShell previewText="Your sign-in link for The Nigerian Economists">
       <Text style={{ fontFamily: F.serif, fontSize: 22, fontWeight: 700, color: C.textPrimary, margin: '0 0 12px 0', lineHeight: '1.3' }}>
         Sign in to your account
       </Text>
       <Text style={{ fontFamily: F.sans, fontSize: 15, color: C.textSecondary, lineHeight: '1.6', margin: '0 0 28px 0' }}>
-        Click the button below to sign in to The Nigerian Economist as{' '}
+        Click the button below to sign in to The Nigerian Economists as{' '}
         <span style={{ color: C.textPrimary, fontWeight: 600 }}>{email}</span>.
         This link expires in 24 hours and can only be used once.
       </Text>
@@ -34,7 +34,7 @@ export function MagicLinkEmail({ url, email }: Props) {
             display: 'inline-block',
           }}
         >
-          Sign in to The Nigerian Economist
+          Sign in to The Nigerian Economists
         </Button>
       </Section>
 

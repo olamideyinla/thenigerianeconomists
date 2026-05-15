@@ -26,7 +26,7 @@ export function WeeklyNewsletter({ unsubscribeUrl, synthesis, articles }: Props)
     <EmailShell
       previewText={`The Synthesis #${synthesis.issueNumber}: ${synthesis.title}`}
       unsubscribeUrl={unsubscribeUrl}
-      footerNote="You are receiving this because you subscribed to The Nigerian Economist newsletter."
+      footerNote="You are receiving this because you subscribed to The Nigerian Economists newsletter."
     >
       {/* Issue header */}
       <Text style={{ fontFamily: F.sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: C.accent, margin: '0 0 4px 0' }}>
@@ -93,7 +93,7 @@ export function WeeklyNewsletter({ unsubscribeUrl, synthesis, articles }: Props)
       <ContentDivider />
 
       <Text style={{ fontFamily: F.sans, fontSize: 12, color: C.textLight, lineHeight: '1.6', margin: 0 }}>
-        The Nigerian Economist is an independent publication committed to rigorous, evidence-based
+        The Nigerian Economists is an independent publication committed to rigorous, evidence-based
         economic journalism. We do not accept advertising or sponsored content. Our funders are
         disclosed at{' '}
         <Link href={`${BASE_URL}/funders`} style={{ color: C.navy }}>thenigerianeconomists.com/funders</Link>.

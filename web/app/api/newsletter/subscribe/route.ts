@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
 
     await sendEmail({
       to: email,
-      subject: 'Confirm your subscription to The Nigerian Economist',
+      subject: 'Confirm your subscription to The Nigerian Economists',
       react: NewsletterConfirmEmail({ confirmUrl, email }),
       emailType: 'newsletter_confirm',
     }).catch((e) => console.error('[newsletter/subscribe] confirm email failed', e))

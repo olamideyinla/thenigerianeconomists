@@ -30,9 +30,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const html = await render(MagicLinkEmail({ url, email }))
         const resend = new ResendSDK(process.env.AUTH_RESEND_KEY)
         await resend.emails.send({
-          from: 'The Nigerian Economist <noreply@updates.thenigerianeconomists.com>',
+          from: 'The Nigerian Economists <noreply@updates.thenigerianeconomists.com>',
           to: email,
-          subject: 'Sign in to The Nigerian Economist',
+          subject: 'Sign in to The Nigerian Economists',
           html,
         })
       },

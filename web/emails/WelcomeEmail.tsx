@@ -14,7 +14,7 @@ export function WelcomeEmail({ email: _email, unsubscribeUrl, name }: Props) {
 
   return (
     <EmailShell
-      previewText="You're confirmed — welcome to The Nigerian Economist"
+      previewText="You're confirmed — welcome to The Nigerian Economists"
       unsubscribeUrl={unsubscribeUrl}
     >
       <Text style={{ fontFamily: F.sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.accent, marginBottom: 16 }}>
@@ -26,7 +26,7 @@ export function WelcomeEmail({ email: _email, unsubscribeUrl, name }: Props) {
       </Text>
 
       <Text style={{ fontFamily: F.sans, fontSize: 15, color: C.textSecondary, lineHeight: '1.7', margin: '0 0 24px 0' }}>
-        Your subscription to <strong style={{ color: C.textPrimary }}>The Nigerian Economist</strong> is confirmed.
+        Your subscription to <strong style={{ color: C.textPrimary }}>The Nigerian Economists</strong> is confirmed.
         You&apos;ll receive our weekly synthesis of economic developments in Nigeria, written by
         independent economists — free of charge, free of advertising.
       </Text>

@@ -35,7 +35,7 @@ export function CorrectionNotice({ recipientEmail, recipientName, article, corre
 
   return (
     <EmailShell
-      previewText={`Significant correction issued — ${article.headline} | The Nigerian Economist`}
+      previewText={`Significant correction issued — ${article.headline} | The Nigerian Economists`}
     >
       <Text style={{ fontFamily: F.sans, fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c0392b', margin: '0 0 16px 0' }}>
         {severityLabel}
@@ -111,7 +111,7 @@ export function CorrectionNotice({ recipientEmail, recipientName, article, corre
       <ContentDivider />
 
       <Text style={{ fontFamily: F.sans, fontSize: 12, color: C.textLight, lineHeight: '1.6', margin: 0 }}>
-        You are receiving this notification because you endorsed this article on The Nigerian Economist.
+        You are receiving this notification because you endorsed this article on The Nigerian Economists.
         We notify endorsers of all significant corrections as part of our commitment to transparency.
         You can manage your notification preferences in your{' '}
         <Link href={`${BASE_URL}/account`} style={{ color: C.navy }}>account settings</Link>.

@@ -3,7 +3,7 @@ import { render } from '@react-email/render'
 import type { ReactElement } from 'react'
 import { db } from '@/lib/db'
 
-const FROM = 'The Nigerian Economist <noreply@updates.thenigerianeconomists.com>'
+const FROM = 'The Nigerian Economists <noreply@updates.thenigerianeconomists.com>'
 
 export type EmailType =
   | 'magic_link'
