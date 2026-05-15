@@ -40,7 +40,7 @@ export default async function ContributePage() {
 
         <h2 className="kicker" style={{ marginTop: '1.75rem', marginBottom: '0.75rem' }}>Submission requirements</h2>
         <ul style={{ paddingLeft: '1.25rem', lineHeight: 1.75, color: 'var(--ink-2)', fontSize: '0.9375rem' }}>
-          <li>800–4,000 words (data briefs may be shorter)</li>
+          <li>800–5,000 words (data briefs may be shorter)</li>
           <li>At least 5 cited references, using our numbered citation format</li>
           <li>No undisclosed conflicts of interest</li>
           <li>Exclusive first publication rights (not published elsewhere)</li>

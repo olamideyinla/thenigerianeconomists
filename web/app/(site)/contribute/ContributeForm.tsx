@@ -105,7 +105,7 @@ export function ContributeForm({ userName, userEmail }: Props) {
             className="ref-field"
             type="number"
             min={400}
-            max={6000}
+            max={5000}
             value={fields.wordCount}
             onChange={(e) => set('wordCount', e.target.value)}
             placeholder="1200"
