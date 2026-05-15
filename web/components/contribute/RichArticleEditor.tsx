@@ -51,12 +51,13 @@ export function RichArticleEditor({ onChange, placeholder }: Props) {
     if (!editor) return
     const dom = editor.view.dom
 
-    const handlePaste = async (e: ClipboardEvent) => {
-      const items = Array.from(e.clipboardData?.items ?? [])
+    const handlePaste = async (e: Event) => {
+      const ce = e as ClipboardEvent
+      const items = Array.from(ce.clipboardData?.items ?? [])
       const imageItem = items.find(i => i.type.startsWith('image/'))
       if (!imageItem) return // not an image-only paste — let Tiptap handle it
 
-      e.preventDefault()
+      ce.preventDefault()
       const file = imageItem.getAsFile()
       if (!file) return
 
@@ -72,8 +73,8 @@ export function RichArticleEditor({ onChange, placeholder }: Props) {
       editor.chain().focus().setImage({ src }).run()
     }
 
-    dom.addEventListener('paste', handlePaste as EventListener)
-    return () => dom.removeEventListener('paste', handlePaste as EventListener)
+    dom.addEventListener('paste', handlePaste)
+    return () => dom.removeEventListener('paste', handlePaste)
   }, [editor])
 
   return (
