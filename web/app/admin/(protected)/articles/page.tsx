@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { db } from '@/lib/db'
+import { type ArticleStatus } from '@prisma/client'
 import { formatDate } from '@/lib/format'
 import { format } from 'date-fns'
 import { NewArticleButton } from './NewArticleButton'
@@ -28,10 +29,15 @@ export default async function AdminArticlesPage({ searchParams }: PageProps) {
   const { status, topic, view } = await searchParams
   const showSubmissions = view === 'submissions'
 
+  const VALID_STATUSES: ArticleStatus[] = ['DRAFT', 'IN_REVIEW', 'SCHEDULED', 'PUBLISHED', 'RETRACTED']
+  const articleStatus = status && VALID_STATUSES.includes(status as ArticleStatus)
+    ? (status as ArticleStatus)
+    : undefined
+
   const [articles, topics, submissions] = await Promise.all([
     db.article.findMany({
       where: {
-        ...(status ? { status } : {}),
+        ...(articleStatus ? { status: articleStatus } : {}),
         ...(topic  ? { topicId: topic } : {}),
       },
       orderBy: { updatedAt: 'desc' },
@@ -113,7 +119,7 @@ export default async function AdminArticlesPage({ searchParams }: PageProps) {
           <div className="flex gap-2 mb-4 flex-wrap">
             <Link
               href="/admin/articles"
-              className={`text-xs px-3 py-1.5 rounded-full border ${!status ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-300 text-gray-600 hover:border-gray-500'}`}
+              className={`text-xs px-3 py-1.5 rounded-full border ${!articleStatus ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-300 text-gray-600 hover:border-gray-500'}`}
             >
               All
             </Link>
@@ -121,7 +127,7 @@ export default async function AdminArticlesPage({ searchParams }: PageProps) {
               <Link
                 key={s}
                 href={`/admin/articles?status=${s}`}
-                className={`text-xs px-3 py-1.5 rounded-full border ${status === s ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-300 text-gray-600 hover:border-gray-500'}`}
+                className={`text-xs px-3 py-1.5 rounded-full border ${articleStatus === s ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-300 text-gray-600 hover:border-gray-500'}`}
               >
                 {s.replace('_', ' ')}
               </Link>
