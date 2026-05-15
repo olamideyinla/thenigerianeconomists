@@ -1,6 +1,7 @@
 {
   "name": "thenigerianeconomists",
   "private": true,
+  "packageManager": "pnpm@11.1.2",
   "devDependencies": {
     "next": "16.2.6"
   }
