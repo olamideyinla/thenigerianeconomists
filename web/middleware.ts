@@ -1,27 +1,23 @@
-import { auth } from './lib/auth'
+// Middleware runs on the Edge runtime — must not import Prisma or any
+// Node.js-only module. Auth is validated here using only the session
+// cookie + AUTH_SECRET (no database round-trip). Role checks are done
+// server-side inside app/admin/layout.tsx and app/account/layout.tsx.
+import NextAuth from 'next-auth'
+import { authConfig } from './auth.config'
+
+const { auth } = NextAuth(authConfig)
 
 export default auth((req) => {
   const { pathname } = req.nextUrl
+  const isLoggedIn = !!req.auth?.user
 
-  // ── Admin routes ────────────────────────────────────────────────
-  const isAdminRoute = pathname.startsWith('/admin')
-  const isAdminLogin = pathname === '/admin/login'
-
-  if (isAdminRoute && !isAdminLogin && !req.auth) {
+  // Admin routes — redirect unauthenticated users to login
+  if (pathname.startsWith('/admin') && pathname !== '/admin/login' && !isLoggedIn) {
     return Response.redirect(new URL('/admin/login', req.url))
   }
 
-  // Editors/admins only — checked server-side in layout too, but fast-path here
-  if (isAdminRoute && !isAdminLogin && req.auth) {
-    const role = (req.auth.user as { role?: string } | undefined)?.role
-    if (role !== 'EDITOR' && role !== 'ADMIN') {
-      return Response.redirect(new URL('/admin/login', req.url))
-    }
-  }
-
-  // ── Account routes ──────────────────────────────────────────────
-  const isAccountRoute = pathname.startsWith('/account')
-  if (isAccountRoute && !req.auth) {
+  // Account routes — redirect unauthenticated users to sign-in
+  if (pathname.startsWith('/account') && !isLoggedIn) {
     return Response.redirect(new URL('/signin', req.url))
   }
 })
