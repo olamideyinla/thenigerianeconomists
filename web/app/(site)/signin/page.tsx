@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { SignInForm } from './SignInForm'
 
-export const metadata: Metadata = { title: 'Sign in' }
+export const metadata: Metadata = { title: 'Sign in or create account' }
 
 export default function SignInPage({
   searchParams,
@@ -13,9 +13,10 @@ export default function SignInPage({
       <div className="signin-shell">
         <header className="signin-head">
           <p className="signin-pub">The Nigerian Economists</p>
-          <h1 className="signin-title">Sign in to your account</h1>
+          <h1 className="signin-title">Sign in or create an account</h1>
           <p className="signin-desc">
-            Use your email to receive a magic link, or sign in with Google.
+            New to The Nigerian Economists? Enter your email below — we will create
+            your account and send you a sign-in link in one step. No password required.
           </p>
         </header>
         <SignInForm searchParams={searchParams} />

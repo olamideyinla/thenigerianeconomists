@@ -56,7 +56,8 @@ export function SignInForm({ searchParams }: SignInFormProps) {
       <div className="signin-success">
         <p className="signin-success-head">Check your email</p>
         <p className="signin-success-body">
-          We sent a sign-in link to <strong>{email}</strong>. Click it to continue.
+          We sent a link to <strong>{email}</strong>. Click it to sign in — or
+          create your account if you&apos;re new.
         </p>
       </div>
     )
@@ -73,7 +74,7 @@ export function SignInForm({ searchParams }: SignInFormProps) {
       {/* Google OAuth */}
       <button className="signin-google-btn" onClick={handleGoogle} type="button">
         <GoogleIcon />
-        Continue with Google
+        Continue with Google — sign in or sign up
       </button>
 
       <div className="signin-divider">
@@ -96,12 +97,13 @@ export function SignInForm({ searchParams }: SignInFormProps) {
           autoComplete="email"
         />
         <button type="submit" className="signin-submit-btn" disabled={loading}>
-          {loading ? 'Sending link…' : 'Send magic link'}
+          {loading ? 'Sending link…' : 'Send sign-in / sign-up link'}
         </button>
       </form>
 
       <p className="signin-note">
-        We&apos;ll email you a link to sign in. No password required.
+        If you don&apos;t have an account yet, one will be created automatically
+        when you click the link we send you. No password needed.
       </p>
     </div>
   )
