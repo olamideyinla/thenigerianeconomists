@@ -1,0 +1,6 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "cd web && pnpm install --frozen-lockfile && pnpm build",
+  "installCommand": "echo 'handled in buildCommand'",
+  "outputDirectory": "web/.next"
+}
