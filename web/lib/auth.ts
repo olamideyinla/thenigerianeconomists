@@ -23,12 +23,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       // Custom branded magic-link email — dynamically imported so heavy packages
       // (react-email, resend SDK) are never bundled into the Edge middleware.
       async sendVerificationRequest({ identifier: email, url }) {
+        // Route through /verify so email scanners (e.g. Gmail) cannot
+        // pre-fetch the callback URL and consume the single-use token.
+        const callbackPath = new URL(url).pathname + new URL(url).search
+        const base = process.env.AUTH_URL ?? 'https://www.thenigerianeconomists.com'
+        const gateUrl = `${base}/verify?to=${encodeURIComponent(callbackPath)}`
+
         const [{ render }, { MagicLinkEmail }, { Resend: ResendSDK }] = await Promise.all([
           import('@react-email/render'),
           import('@/emails/MagicLinkEmail'),
           import('resend'),
         ])
-        const html = await render(MagicLinkEmail({ url, email }))
+        const html = await render(MagicLinkEmail({ url: gateUrl, email }))
         const resend = new ResendSDK(process.env.AUTH_RESEND_KEY)
         await resend.emails.send({
           from: 'The Nigerian Economists <noreply@updates.thenigerianeconomists.com>',
@@ -41,6 +47,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     Google({
       clientId: process.env.AUTH_GOOGLE_ID,
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      allowDangerousEmailAccountLinking: true,
     }),
   ],
   callbacks: {

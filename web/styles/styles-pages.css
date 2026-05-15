@@ -806,6 +806,67 @@
 .account-btn:hover:not(:disabled) { opacity: 0.85; }
 .account-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
+/* ─── Magic-link verification gate ──────────────────────────── */
+
+.page-verify {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 2rem 1.5rem;
+}
+
+.verify-shell {
+  width: 100%;
+  max-width: 420px;
+  background: var(--bg, #fff);
+  border: 1px solid var(--rule, #e0e0e0);
+  border-radius: 4px;
+  padding: 2rem 1.75rem;
+  text-align: center;
+}
+
+.verify-pub {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3, #888);
+  margin-bottom: 0.75rem;
+}
+
+.verify-title {
+  font-family: var(--font-fraunces, serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.verify-body {
+  font-size: 0.9375rem;
+  color: var(--ink-2, #444);
+  line-height: 1.65;
+  margin-bottom: 1.5rem;
+}
+
+.verify-invalid {
+  color: #b91c1c;
+}
+
+.verify-btn {
+  display: inline-block;
+  padding: 11px 32px;
+  background: var(--ink, #222);
+  color: #fff;
+  border-radius: 3px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.verify-btn:hover { background: var(--accent, #b45309); }
+
 /* ─── Contribute / submit page ───────────────────────────────── */
 
 .page-contribute {
