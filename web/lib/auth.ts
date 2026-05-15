@@ -52,4 +52,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session
     },
   },
+  events: {
+    // Auto-promote the designated admin email to ADMIN role on every sign-in.
+    // This handles first-time setup and re-promotion if the role was accidentally changed.
+    async signIn({ user }) {
+      const adminEmail = process.env.AUTH_ADMIN_EMAIL
+      if (!adminEmail || !user.id || user.email !== adminEmail) return
+      const dbUser = await db.user.findUnique({ where: { id: user.id }, select: { role: true } })
+      if (dbUser && dbUser.role !== 'ADMIN') {
+        await db.user.update({ where: { id: user.id }, data: { role: 'ADMIN' } })
+      }
+    },
+  },
 })

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { db } from '@/lib/db'
+import { NewAuthorButton } from './NewAuthorButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -18,6 +19,7 @@ export default async function AdminAuthorsPage() {
           <h1 className="admin-page-title">Authors</h1>
           <p className="admin-page-desc">{authors.length} author{authors.length !== 1 ? 's' : ''}</p>
         </div>
+        <NewAuthorButton />
       </div>
 
       <div className="admin-table-wrap">
@@ -52,7 +54,7 @@ export default async function AdminAuthorsPage() {
           </tbody>
         </table>
         {authors.length === 0 && (
-          <div className="text-center py-12 text-sm text-gray-400">No authors yet.</div>
+          <div className="text-center py-12 text-sm text-gray-400">No authors yet. Add one above.</div>
         )}
       </div>
     </div>
