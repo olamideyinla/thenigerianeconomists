@@ -33,3 +33,5 @@ web/tsconfig.tsbuildinfo
 
 # Logs
 *.log
+
+.vercel
