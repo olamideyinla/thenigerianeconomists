@@ -3,6 +3,8 @@ import { requireAdmin } from '@/lib/auth-helpers'
 import { format } from 'date-fns'
 import type { Prisma } from '@prisma/client'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = { title: 'Audit log' }
 
 interface PageProps {

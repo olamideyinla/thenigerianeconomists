@@ -2,6 +2,8 @@ import { db } from '@/lib/db'
 import { format } from 'date-fns'
 import { FunderForm } from './FunderForm'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = { title: 'Funders' }
 
 export default async function AdminFundersPage() {

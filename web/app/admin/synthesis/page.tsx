@@ -2,6 +2,8 @@ import Link from 'next/link'
 import { db } from '@/lib/db'
 import { format } from 'date-fns'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = { title: 'Synthesis' }
 
 export default async function AdminSynthesisPage() {

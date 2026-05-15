@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { db } from '@/lib/db'
 import { format } from 'date-fns'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'The Synthesis',
   description: 'A fortnightly synthesis of the economic arguments shaping Nigeria.',

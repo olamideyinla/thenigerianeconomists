@@ -2,6 +2,8 @@ import { db } from '@/lib/db'
 import { format } from 'date-fns'
 import { ModerationActions } from './ModerationActions'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = { title: 'Moderation' }
 
 export default async function AdminModerationPage() {

@@ -19,6 +19,8 @@ import '@/styles/styles-base.css'
 import '@/styles/styles-article.css'
 import '@/styles/globals.css'
 
+export const dynamic = 'force-dynamic'
+
 interface PageProps {
   params: Promise<{ id: string }>
 }

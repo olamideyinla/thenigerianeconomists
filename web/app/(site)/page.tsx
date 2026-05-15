@@ -2,6 +2,8 @@ import Link from 'next/link'
 import { format } from 'date-fns'
 import { db } from '@/lib/db'
 
+export const dynamic = 'force-dynamic'
+
 export default async function HomePage() {
   // ── Data queries ──────────────────────────────────────────────────
 

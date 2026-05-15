@@ -3,6 +3,8 @@ import { db } from '@/lib/db'
 import { format } from 'date-fns'
 import { RebuttalView, type RebuttalThreadData } from './RebuttalView'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Rebuttal Index',
   description: 'All active debate threads on The Nigerian Economists.',

@@ -2,6 +2,8 @@ import { db } from '@/lib/db'
 import { format } from 'date-fns'
 import { DeleteMediaButton } from './DeleteMediaButton'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = { title: 'Media' }
 
 export default async function AdminMediaPage() {

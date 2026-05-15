@@ -3,6 +3,8 @@ import { requireUser } from '@/lib/auth-helpers'
 import { db } from '@/lib/db'
 import { AccountClient } from './AccountClient'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = { title: 'Your account' }
 
 export default async function AccountPage() {

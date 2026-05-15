@@ -2,6 +2,8 @@ import Link from 'next/link'
 import { db } from '@/lib/db'
 import { formatDate } from '@/lib/format'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = { title: 'Dashboard' }
 
 export default async function AdminDashboard() {

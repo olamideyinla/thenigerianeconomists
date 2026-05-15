@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { db } from '@/lib/db'
 import { format } from 'date-fns'
 
+export const dynamic = 'force-dynamic'
+
 interface PageProps {
   params: Promise<{ slug: string }>
 }

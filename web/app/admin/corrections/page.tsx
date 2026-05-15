@@ -2,6 +2,8 @@ import { db } from '@/lib/db'
 import { format } from 'date-fns'
 import { CorrectionForm } from './CorrectionForm'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = { title: 'Corrections' }
 
 export default async function AdminCorrectionsPage() {

@@ -2,6 +2,8 @@ import { db } from '@/lib/db'
 import { format } from 'date-fns'
 import { ExportButton } from './ExportButton'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = { title: 'Subscribers' }
 
 export default async function AdminSubscribersPage() {

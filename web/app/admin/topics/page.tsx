@@ -1,6 +1,8 @@
 import { db } from '@/lib/db'
 import { TopicForm } from './TopicForm'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = { title: 'Topics' }
 
 export default async function AdminTopicsPage() {

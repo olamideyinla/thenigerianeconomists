@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { db } from '@/lib/db'
 import { format } from 'date-fns'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Corrections',
   description: 'A chronological log of all corrections issued by The Nigerian Economists.',

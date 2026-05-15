@@ -4,6 +4,8 @@ import { requireAdmin } from '@/lib/auth-helpers'
 import { UserRoleSelect } from './UserRoleSelect'
 import { SuspendButton } from './SuspendButton'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = { title: 'Users' }
 
 export default async function AdminUsersPage() {

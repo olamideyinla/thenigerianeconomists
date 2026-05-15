@@ -3,6 +3,8 @@ import { db } from '@/lib/db'
 import { formatDate } from '@/lib/format'
 import { NewArticleButton } from './NewArticleButton'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = { title: 'Articles' }
 
 interface PageProps {

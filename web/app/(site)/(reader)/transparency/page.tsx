@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { db } from '@/lib/db'
 import { format } from 'date-fns'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Funders & Transparency',
   description: 'A public register of all organisations and individuals that fund The Nigerian Economists.',
