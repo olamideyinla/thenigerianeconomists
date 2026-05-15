@@ -18,7 +18,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     Resend({
       apiKey: process.env.AUTH_RESEND_KEY,
-      from: 'noreply@thenigerianeconomists.com',
+      from: 'noreply@updates.thenigerianeconomists.com',
       // Custom branded magic-link email — dynamically imported so heavy packages
       // (react-email, resend SDK) are never bundled into the Edge middleware.
       async sendVerificationRequest({ identifier: email, url }) {
@@ -30,7 +30,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const html = await render(MagicLinkEmail({ url, email }))
         const resend = new ResendSDK(process.env.AUTH_RESEND_KEY)
         await resend.emails.send({
-          from: 'The Nigerian Economist <noreply@thenigerianeconomists.com>',
+          from: 'The Nigerian Economist <noreply@updates.thenigerianeconomists.com>',
           to: email,
           subject: 'Sign in to The Nigerian Economist',
           html,

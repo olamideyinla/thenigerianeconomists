@@ -163,7 +163,7 @@ async function sendRebuttalNotifications(
   if (rebuttalLinks.length === 0) return
 
   const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://thenigerianeconomists.com'
-  const FROM = 'The Nigerian Economist <noreply@thenigerianeconomists.com>'
+  const FROM = 'The Nigerian Economist <noreply@updates.thenigerianeconomists.com>'
   const resend = getResend()
 
   for (const link of rebuttalLinks) {

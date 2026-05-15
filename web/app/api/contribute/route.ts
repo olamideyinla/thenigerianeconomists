@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
   const editorialEmail = process.env.AUTH_ADMIN_EMAIL ?? 'thenigerianeconomists@gmail.com'
 
   await resend.emails.send({
-    from: 'The Nigerian Economist <noreply@thenigerianeconomists.com>',
+    from: 'The Nigerian Economist <noreply@updates.thenigerianeconomists.com>',
     to: editorialEmail,
     subject: `[Pitch] ${headline.trim()}`,
     html: `
