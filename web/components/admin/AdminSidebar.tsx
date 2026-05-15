@@ -17,12 +17,14 @@ import {
   LogOut,
   Shield,
   ScrollText,
+  Inbox,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const NAV_ITEMS = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { href: '/admin/articles', label: 'Articles', icon: FileText },
+  { href: '/admin/submissions', label: 'Submissions', icon: Inbox },
   { href: '/admin/media', label: 'Media', icon: Image },
   { href: '/admin/authors', label: 'Authors', icon: Users },
   { href: '/admin/topics', label: 'Topics', icon: Tag },

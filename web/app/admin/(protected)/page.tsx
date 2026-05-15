@@ -13,6 +13,7 @@ export default async function AdminDashboard() {
     scheduledCount,
     publishedCount,
     pendingNotes,
+    pendingSubmissions,
     recentArticles,
   ] = await Promise.all([
     db.article.count({ where: { status: 'DRAFT' } }),
@@ -20,6 +21,7 @@ export default async function AdminDashboard() {
     db.article.count({ where: { status: 'SCHEDULED' } }),
     db.article.count({ where: { status: 'PUBLISHED' } }),
     db.readerNote.count({ where: { status: 'PENDING' } }),
+    db.submission.count({ where: { status: 'PENDING' } }),
     db.article.findMany({
       where: { status: 'PUBLISHED' },
       orderBy: { publishedAt: 'desc' },
@@ -61,6 +63,14 @@ export default async function AdminDashboard() {
         <div className="admin-stat">
           <div className="admin-stat-label">Pending notes</div>
           <div className="admin-stat-value">{pendingNotes}</div>
+        </div>
+        <div className="admin-stat">
+          <div className="admin-stat-label">
+            <Link href="/admin/submissions" style={{ color: 'inherit', textDecoration: 'none' }}>
+              Submissions ↗
+            </Link>
+          </div>
+          <div className="admin-stat-value">{pendingSubmissions}</div>
         </div>
       </div>
 
