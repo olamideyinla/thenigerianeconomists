@@ -14,7 +14,7 @@ export default function NewsletterPage() {
         <h1 className="news-title">A serious economics letter, delivered Sunday morning.</h1>
         <p className="news-deck">
           One synthesis. The week&#8217;s three most important pieces. One chart that matters.
-          No summaries of what you already read. No advertising &#8212; ever.
+          No summaries of what you already read.
         </p>
       </header>
       <NewsletterForm />
