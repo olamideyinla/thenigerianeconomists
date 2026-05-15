@@ -520,6 +520,7 @@ model Submission {
   email         String
   name          String
   headline      String
+  deck          String?          // subtitle / standfirst
   body          String           // full article text as submitted
   wordCount     Int
   affiliation   String?

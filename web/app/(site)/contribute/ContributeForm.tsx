@@ -13,6 +13,7 @@ function countWords(text: string): number {
 
 export function ContributeForm({ userName, userEmail }: Props) {
   const [headline, setHeadline] = useState('')
+  const [deck, setDeck] = useState('')
   const [body, setBody] = useState('')
   const [affiliation, setAffiliation] = useState('')
   const [coi, setCoi] = useState('')
@@ -22,7 +23,7 @@ export function ContributeForm({ userName, userEmail }: Props) {
 
   const wordCount = countWords(body)
   const wordCountOk = wordCount >= 800 && wordCount <= 5000
-  const canSubmit = headline.trim().length > 0 && body.trim().length > 0 && wordCountOk
+  const canSubmit = headline.trim().length > 0 && deck.trim().length > 0 && body.trim().length > 0 && wordCountOk
 
   const wordCountColor =
     wordCount === 0 ? 'var(--ink-faint, #bbb)'
@@ -43,7 +44,7 @@ export function ContributeForm({ userName, userEmail }: Props) {
       const res = await fetch('/api/contribute', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ headline, body, affiliation, coiDisclosure: coi }),
+        body: JSON.stringify({ headline, deck, body, affiliation, coiDisclosure: coi }),
       })
       if (!res.ok) {
         const data = await res.json() as { error?: string }
@@ -90,6 +91,23 @@ export function ContributeForm({ userName, userEmail }: Props) {
           required
           maxLength={200}
         />
+      </div>
+
+      {/* Deck / subtitle */}
+      <div className="contribute-field">
+        <label className="contribute-label" htmlFor="cf-deck">
+          Subtitle / standfirst <span className="contribute-req">*</span>
+        </label>
+        <input
+          id="cf-deck"
+          className="contribute-input"
+          value={deck}
+          onChange={(e) => setDeck(e.target.value)}
+          placeholder="One sentence that expands on your headline and draws the reader in"
+          required
+          maxLength={300}
+        />
+        <p className="contribute-hint">This appears directly beneath the headline in the published article.</p>
       </div>
 
       {/* Article body */}
