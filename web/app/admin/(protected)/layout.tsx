@@ -9,6 +9,14 @@ export const metadata = {
 export default async function AdminProtectedLayout({ children }: { children: React.ReactNode }) {
   const session = await auth()
 
+  // Temporary diagnostic log — remove after debugging
+  console.log('[admin-layout] session:', JSON.stringify({
+    hasSession: !!session,
+    userId: session?.user?.id,
+    email: session?.user?.email,
+    role: (session?.user as { role?: string } | undefined)?.role,
+  }))
+
   if (!session?.user) {
     redirect('/admin/login')
   }
