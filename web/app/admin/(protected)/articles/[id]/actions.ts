@@ -61,10 +61,8 @@ export async function validateArticle(id: string): Promise<{ errors: string[] }>
   const refs = article.references
   const mdx = article.contentMdx ?? ''
 
-  // 1. Minimum references
-  if (refs.length < 5) {
-    errors.push(`At least 5 references required (currently ${refs.length}).`)
-  }
+  // Note: a minimum of 5 references is recommended for contributors but
+  // is not enforced here — editors decide on a case-by-case basis.
 
   // 2. Collect all {{N}} tokens
   const cited = new Set<number>()
