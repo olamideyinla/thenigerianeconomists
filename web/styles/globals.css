@@ -1,0 +1,118 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Production overrides — imported last to sit above prototype rules.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Override the prototype's stage/bezel body background so the
+   full-bleed production layout uses the theme's paper colour. */
+body {
+  background: var(--bg);
+  background-image: none;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--body-size, 18px);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Links used as nav elements — strip default underline/colour */
+a.m-wordmark,
+a.synth-strip,
+a.issue-link,
+a.home-section-more,
+a.news-cta-arrow,
+a.m-btn {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* details/summary reset so COIDisclosure can use native disclosure */
+details.coi > summary {
+  list-style: none;
+  cursor: pointer;
+}
+details.coi > summary::-webkit-details-marker { display: none; }
+details.coi[open] .coi-caret::after { content: "−"; }
+details.coi:not([open]) .coi-caret::after { content: "+"; }
+details.coi > summary .coi-caret { font-size: 14px; color: var(--ink-soft); }
+
+/* ── Portalled citation expansions ─────────────────────────────────
+   Citation components render their expansion panels via createPortal
+   into document.body.  The scrim needs position:fixed (not absolute)
+   so it covers the viewport regardless of scroll position.            */
+
+.cite-sheet-fixed {
+  position: fixed !important;
+}
+
+/* CiteInline portalled to body — absolute-position below the marker
+   is not feasible from body, so we use a centred fixed overlay.      */
+.cite-inline {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(560px, calc(100vw - 32px));
+  z-index: 40;
+  border-radius: 2px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+}
+
+/* CiteFootnote portalled to body — slim bar at bottom of viewport    */
+.cite-fn {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  border-top: 1px solid var(--accent);
+  border-bottom: none;
+  background: var(--bg);
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+}
+
+/* Article shell — prevent overflow clipping the inline rail */
+.article-shell { overflow: visible; }
+
+/* Missing / error figure */
+.figure-missing {
+  padding: 20px 16px;
+  background: var(--veil);
+  border: 0.5px dashed var(--rule);
+  font-family: var(--font-meta);
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+/* Homepage card link wrappers */
+a.lead-card-link,
+a.feature-card-link,
+a.pair-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+/* Footer nav links — match the button style */
+.sf-cols a {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  color: var(--bg);
+  padding: 4px 0;
+  text-decoration: none;
+  font-style: italic;
+}
+.sf-cols a:hover { color: var(--accent); }
+
+/* Topic filter sub-nav links */
+a.topic-filter {
+  text-decoration: none;
+}
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible) { outline: none; }

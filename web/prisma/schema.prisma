@@ -1,0 +1,493 @@
+// ═══════════════════════════════════════════════════════════════════
+// The Nigerian Economists — Prisma schema
+// PostgreSQL · Prisma v7 (url in prisma.config.ts)
+// ═══════════════════════════════════════════════════════════════════
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ────────────────────────────────────────────────────────
+
+enum ArticleStatus {
+  DRAFT
+  IN_REVIEW
+  SCHEDULED
+  PUBLISHED
+  RETRACTED
+}
+
+enum CorrectionSeverity {
+  TYPO
+  CLARIFICATION
+  FACTUAL
+  SIGNIFICANT
+}
+
+enum RebuttalStance {
+  REBUTS
+  EXTENDS
+  QUALIFIES
+}
+
+enum MediaMimeType {
+  IMAGE_JPEG
+  IMAGE_PNG
+  IMAGE_WEBP
+  IMAGE_SVG
+  IMAGE_AVIF
+}
+
+enum FigureKind {
+  IMAGE
+  CHART_NATIVE
+  CHART_EMBED
+  TABLE
+  MAP
+}
+
+enum FigureWidth {
+  COLUMN
+  WIDE
+  FULL
+}
+
+enum ChartEmbedProvider {
+  DATAWRAPPER
+  FLOURISH
+  OBSERVABLE
+  OTHER
+}
+
+enum ChartType {
+  LINE
+  BAR
+  COLUMN
+  STACKED_BAR
+  AREA
+  SCATTER
+}
+
+enum AxisFormat {
+  TEXT
+  DATE
+  CATEGORY
+  NUMBER
+  CURRENCY_NGN
+  CURRENCY_USD
+  PERCENT
+}
+
+enum UserRole {
+  READER
+  CONTRIBUTOR
+  EDITOR
+  ADMIN
+}
+
+enum ReaderNoteStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum NewsletterSource {
+  HOMEPAGE
+  ARTICLE_FOOT
+  FOOTER
+  ADMIN
+}
+
+enum FunderType {
+  FOUNDATION
+  INSTITUTION
+  INDIVIDUAL
+  READER_REVENUE
+}
+
+// ─── Editorial entities ───────────────────────────────────────────
+
+model Author {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  initials    String
+  role        String
+  affiliation String
+  bio         String   // markdown
+  avatarUrl   String?
+  twitter     String?
+  linkedin    String?
+  isStaff     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  disclosures COIDisclosure[]
+  articles    Article[]
+  syntheses   Synthesis[]
+}
+
+// Versioned COI — effectiveTo null means currently active
+model COIDisclosure {
+  id            String    @id @default(cuid())
+  authorId      String
+  text          String
+  effectiveFrom DateTime  @default(now())
+  effectiveTo   DateTime?
+  createdAt     DateTime  @default(now())
+
+  author Author @relation(fields: [authorId], references: [id])
+}
+
+model Topic {
+  id            String  @id @default(cuid())
+  slug          String  @unique
+  name          String
+  description   String?
+  parentTopicId String?
+  displayOrder  Int     @default(0)
+
+  parentTopic Topic?  @relation("TopicHierarchy", fields: [parentTopicId], references: [id])
+  childTopics Topic[] @relation("TopicHierarchy")
+  articles    Article[]
+}
+
+model Article {
+  id             String        @id @default(cuid())
+  slug           String        @unique
+  kicker         String
+  headline       String
+  deck           String
+  authorId       String
+  topicId        String
+  status         ArticleStatus @default(DRAFT)
+  publishedAt    DateTime?
+  scheduledFor   DateTime?
+  wordCount      Int           @default(0)
+  readMinutes    Int           @default(0)
+  contentMdx     String        // MDX source
+  excerpt        String?
+  ogImageUrl     String?
+  retractionNote String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  author Author @relation(fields: [authorId], references: [id])
+  topic  Topic  @relation(fields: [topicId], references: [id])
+
+  references   Reference[]
+  figures      Figure[]
+  corrections  Correction[]
+  rebuttedBy   Rebuttal[]       @relation("OriginalArticle")
+  rebuttals    Rebuttal[]       @relation("RebuttalArticle")
+  syntheses    SynthesisArticle[]
+  endorsements Endorsement[]
+  readerNotes  ReaderNote[]
+
+  @@index([slug])
+  @@index([status])
+  @@index([publishedAt])
+  @@index([topicId])
+  @@index([authorId])
+}
+
+model Reference {
+  id          String  @id @default(cuid())
+  articleId   String
+  indexNumber Int
+  author      String
+  year        String
+  title       String
+  publication String?
+  url         String?
+  notes       String?
+
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@unique([articleId, indexNumber])
+}
+
+model Rebuttal {
+  id                String         @id @default(cuid())
+  originalArticleId String
+  rebuttalArticleId String
+  stance            RebuttalStance
+  createdAt         DateTime       @default(now())
+
+  originalArticle Article @relation("OriginalArticle",  fields: [originalArticleId], references: [id])
+  rebuttalArticle Article @relation("RebuttalArticle", fields: [rebuttalArticleId], references: [id])
+}
+
+model Synthesis {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  issueNumber Int
+  weekOf      DateTime
+  title       String
+  contentMdx  String
+  editorId    String
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  editor   Author             @relation(fields: [editorId], references: [id])
+  articles SynthesisArticle[]
+}
+
+model SynthesisArticle {
+  synthesisId String
+  articleId   String
+  order       Int
+
+  synthesis Synthesis @relation(fields: [synthesisId], references: [id])
+  article   Article   @relation(fields: [articleId], references: [id])
+
+  @@id([synthesisId, articleId])
+}
+
+model Correction {
+  id             String             @id @default(cuid())
+  articleId      String
+  correctionText String
+  issuedBy       String
+  issuedAt       DateTime           @default(now())
+  severityLevel  CorrectionSeverity
+
+  article Article @relation(fields: [articleId], references: [id])
+}
+
+// ─── Media entities ───────────────────────────────────────────────
+
+model MediaAsset {
+  id               String        @id @default(cuid())
+  filename         String
+  mimeType         MediaMimeType
+  originalFilename String
+  byteSize         Int
+  width            Int?
+  height           Int?
+  storageKey       String        // R2 object key
+  publicUrl        String
+  blurDataUrl      String?       // base64 blur placeholder
+  uploadedBy       String
+  uploadedAt       DateTime      @default(now())
+  isStock          Boolean       @default(false)
+
+  uploader            User        @relation("UploadedAssets",  fields: [uploadedBy], references: [id])
+  figures             Figure[]    @relation("FigureMedia")
+  chartEmbedFallbacks ChartEmbed[] @relation("EmbedFallback")
+}
+
+model Figure {
+  id           String      @id @default(cuid())
+  articleId    String
+  mediaAssetId String?     // null for CHART_NATIVE, CHART_EMBED, TABLE
+  kind         FigureKind
+  position     Int         // order within article (matches <Figure id /> directive)
+  // altText required for IMAGE kind (min 30 chars — enforced in DB, see migration)
+  altText      String?
+  caption      String      // NOT NULL
+  source       String      // NOT NULL — even if "Author's analysis"
+  licenseInfo  String?
+  width        FigureWidth @default(COLUMN)
+
+  article    Article     @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  mediaAsset MediaAsset? @relation("FigureMedia", fields: [mediaAssetId], references: [id])
+
+  chartEmbed  ChartEmbed?
+  chartNative ChartNative?
+  dataTable   DataTable?
+
+  @@index([articleId])
+}
+
+// 1:1 with Figure where kind = CHART_EMBED
+model ChartEmbed {
+  id                    String             @id @default(cuid())
+  figureId              String             @unique
+  provider              ChartEmbedProvider
+  embedUrl              String
+  embedHeight           Int                // px
+  allowFullscreen       Boolean            @default(false)
+  staticFallbackAssetId String?
+
+  figure              Figure      @relation(fields: [figureId], references: [id], onDelete: Cascade)
+  staticFallbackAsset MediaAsset? @relation("EmbedFallback", fields: [staticFallbackAssetId], references: [id])
+}
+
+// 1:1 with Figure where kind = CHART_NATIVE
+model ChartNative {
+  id            String     @id @default(cuid())
+  figureId      String     @unique
+  chartType     ChartType
+  dataJson      Json       // JSONB rows array
+  xAxisLabel    String
+  yAxisLabel    String
+  xAxisFormat   AxisFormat @default(TEXT)
+  yAxisFormat   AxisFormat @default(NUMBER)
+  series        Json       // JSONB [{key, label, color}]
+  annotations   Json?      // JSONB optional callouts
+  showLegend    Boolean    @default(true)
+  showGridlines Boolean    @default(true)
+  sourceNote    String
+
+  figure Figure @relation(fields: [figureId], references: [id], onDelete: Cascade)
+}
+
+// 1:1 with Figure where kind = TABLE
+model DataTable {
+  id               String @id @default(cuid())
+  figureId         String @unique
+  headers          Json   // JSONB string[]
+  rows             Json   // JSONB string[][]
+  columnAlignments Json   // JSONB ("left"|"right"|"center")[]
+  columnFormats    Json   // JSONB AxisFormat[]
+  sourceNote       String
+
+  figure Figure @relation(fields: [figureId], references: [id], onDelete: Cascade)
+}
+
+// ─── User and engagement ──────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  name          String?
+  role          UserRole  @default(READER)
+  createdAt     DateTime  @default(now())
+
+  // Auth.js / next-auth v5 relations
+  accounts Account[]
+  sessions Session[]
+
+  uploadedAssets MediaAsset[]  @relation("UploadedAssets")
+  endorsements   Endorsement[]
+  readerNotes    ReaderNote[]
+  moderatedNotes ReaderNote[]  @relation("Moderator")
+}
+
+// Auth.js required models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Endorsement {
+  id        String   @id @default(cuid())
+  articleId String
+  userId    String
+  createdAt DateTime @default(now())
+
+  article Article @relation(fields: [articleId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@unique([articleId, userId])
+}
+
+model ReaderNote {
+  id          String           @id @default(cuid())
+  articleId   String
+  userId      String
+  body        String           // max 600 chars — enforced at application layer
+  status      ReaderNoteStatus @default(PENDING)
+  moderatedBy String?
+  moderatedAt DateTime?
+  createdAt   DateTime         @default(now())
+
+  article   Article  @relation(fields: [articleId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  moderator User?    @relation("Moderator", fields: [moderatedBy], references: [id])
+}
+
+model NewsletterSubscription {
+  id             String           @id @default(cuid())
+  email          String           @unique
+  confirmToken   String?          @unique  // cleared once confirmed
+  confirmedAt    DateTime?        // null = awaiting double opt-in confirmation
+  unsubscribedAt DateTime?
+  source         NewsletterSource @default(HOMEPAGE)
+  createdAt      DateTime         @default(now())
+}
+
+model SentEmail {
+  id          String   @id @default(cuid())
+  to          String
+  subject     String
+  emailType   String   // 'welcome' | 'magic_link' | 'newsletter_confirm' | 'newsletter_weekly' | 'newsletter_monthly' | 'correction_notice'
+  resendId    String?
+  synthesisId String?
+  createdAt   DateTime @default(now())
+
+  @@index([emailType])
+  @@index([to])
+  @@index([createdAt])
+}
+
+model SuppressionList {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  reason    String   // 'bounce' | 'complaint'
+  createdAt DateTime @default(now())
+}
+
+model Funder {
+  id           String     @id @default(cuid())
+  name         String
+  type         FunderType
+  amountRange  String
+  periodStart  DateTime
+  periodEnd    DateTime?
+  description  String
+  url          String?
+  displayOrder Int        @default(0)
+  isCurrent    Boolean    @default(true)
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String
+  action     String
+  entityType String
+  entityId   String
+  metadata   Json?    // JSONB
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}

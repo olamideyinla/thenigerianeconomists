@@ -1,0 +1,248 @@
+/* ═════════════════════════════════════════════════════════════════
+   Reader engagement — likes (endorsements) and reader notes
+   ═════════════════════════════════════════════════════════════════ */
+
+/* ─── Like bar ──────────────────────────────────────────────────── */
+.like-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0 14px;
+  border-bottom: 0.5px solid var(--rule);
+  margin-bottom: 14px;
+}
+.like-btn {
+  appearance: none; border: 0; background: transparent;
+  display: inline-flex; align-items: center; gap: 8px;
+  cursor: pointer; padding: 6px 10px 6px 0;
+  color: var(--ink);
+  font-family: var(--font-meta);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  border-right: 0.5px solid var(--rule);
+  border-radius: 0;
+}
+.like-glyph {
+  display: inline-flex; color: var(--ink-soft);
+  transition: transform 0.15s ease;
+}
+.like-btn:hover .like-glyph,
+.like-btn.liked .like-glyph { color: var(--accent); transform: scale(1.06); }
+.like-btn.liked .like-label { color: var(--accent); font-weight: 600; }
+.like-label {
+  text-transform: uppercase; font-weight: 500;
+  font-size: 11px; letter-spacing: 0.08em;
+}
+.like-count {
+  font-family: var(--font-meta);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px; font-weight: 600;
+  color: var(--ink);
+  padding-left: 4px;
+  margin-left: 2px;
+}
+.like-btn.liked .like-count { color: var(--accent); }
+
+.like-meta {
+  display: flex; gap: 14px; align-items: center;
+  color: var(--ink-soft);
+}
+.like-share {
+  appearance: none; border: 0; background: transparent;
+  display: inline-flex; align-items: center; gap: 6px;
+  cursor: pointer; padding: 4px 0;
+  font-family: var(--font-meta);
+  font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+.like-share:hover { color: var(--accent); }
+
+/* ─── Reader notes section ──────────────────────────────────────── */
+.notes { padding-top: 12px; padding-bottom: 16px; }
+.notes-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 8px;
+}
+.notes-count {
+  font-family: var(--font-meta); font-size: 11px;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+.notes-policy {
+  font-family: var(--font-body); font-style: italic;
+  font-size: 14px; line-height: 1.5;
+  color: var(--ink-soft);
+  margin: 0 0 16px;
+  padding-left: 10px;
+  border-left: 2px solid var(--rule);
+}
+.notes-policy-link {
+  appearance: none; border: 0; background: transparent;
+  font: inherit; cursor: pointer;
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  padding: 0; font-style: italic;
+}
+
+/* Open composer button */
+.notes-open {
+  appearance: none;
+  width: 100%;
+  display: flex; align-items: center; gap: 10px;
+  background: var(--veil);
+  border: 0.5px dashed var(--rule);
+  padding: 12px 14px;
+  font-family: var(--font-meta);
+  font-size: 12px; letter-spacing: 0.04em;
+  color: var(--ink-soft); cursor: pointer;
+  margin-bottom: 16px;
+}
+.notes-open:hover { border-color: var(--accent); color: var(--accent); }
+.notes-open-plus {
+  font-family: var(--font-meta);
+  font-size: 18px; line-height: 1;
+  color: var(--accent);
+  font-weight: 300;
+}
+
+/* Composer */
+.notes-form {
+  background: var(--veil);
+  border: 0.5px solid var(--rule);
+  border-left: 2px solid var(--accent);
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.notes-name, .notes-textarea {
+  appearance: none; border: 0;
+  background: transparent;
+  border-bottom: 1px solid var(--rule);
+  padding: 6px 0 8px;
+  font-family: var(--font-body);
+  font-size: 15px; line-height: 1.45;
+  color: var(--ink);
+  width: 100%;
+  outline: none;
+  resize: none;
+}
+.notes-name {
+  font-size: 13px; font-family: var(--font-meta);
+  letter-spacing: 0.02em;
+}
+.notes-textarea { font-style: italic; }
+.notes-textarea:focus, .notes-name:focus { border-bottom-color: var(--accent); }
+.notes-textarea::placeholder, .notes-name::placeholder { color: var(--ink-faint); font-style: italic; }
+
+.notes-form-foot {
+  display: flex; align-items: center; gap: 10px;
+  padding-top: 4px;
+}
+.notes-counter {
+  font-family: var(--font-meta);
+  font-size: 11px;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+  margin-right: auto;
+}
+.notes-counter.low { color: var(--accent); font-weight: 700; }
+.notes-cancel {
+  appearance: none; border: 0; background: transparent;
+  font-family: var(--font-meta); font-size: 11.5px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--ink-soft); cursor: pointer; padding: 8px 10px;
+  font-weight: 500;
+}
+.notes-submit {
+  appearance: none; border: 0; cursor: pointer;
+  background: var(--ink); color: var(--bg);
+  font-family: var(--font-meta);
+  font-size: 11.5px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 9px 16px;
+}
+.notes-submit:disabled { background: var(--ink-faint); cursor: not-allowed; }
+.notes-submit:not(:disabled):hover { background: var(--accent); }
+
+/* List */
+.notes-list { list-style: none; padding: 0; margin: 0; }
+.note {
+  padding: 14px 0;
+  border-top: 0.5px solid var(--rule);
+}
+.note.mine {
+  background: var(--accent-veil);
+  margin: 0 calc(var(--gutter) * -1);
+  padding: 14px var(--gutter);
+}
+.note-head {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.note-initial {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 14px; font-weight: 600;
+  display: grid; place-items: center;
+  font-variation-settings: "opsz" 24, "SOFT" 30;
+}
+.note-name {
+  font-family: var(--font-meta); font-size: 12.5px;
+  font-weight: 600; color: var(--ink);
+  letter-spacing: 0.01em;
+}
+.note-mine {
+  font-style: italic;
+  color: var(--accent);
+  font-weight: 500;
+}
+.note-sub {
+  font-family: var(--font-meta); font-size: 10.5px;
+  color: var(--ink-soft);
+  margin-top: 1px;
+  letter-spacing: 0.02em;
+}
+.note-endorse {
+  appearance: none; border: 0; background: transparent;
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: var(--font-meta);
+  font-size: 11px; color: var(--ink-soft);
+  cursor: pointer; padding: 4px 6px;
+  font-variant-numeric: tabular-nums;
+}
+.note-endorse:hover { color: var(--accent); }
+.note-body {
+  font-family: var(--font-body);
+  font-size: 15.5px;
+  line-height: 1.5;
+  color: var(--ink);
+  margin: 0;
+  padding-left: 38px;
+}
+
+.notes-more {
+  appearance: none; border: 0; background: transparent;
+  font-family: var(--font-meta); font-size: 11.5px;
+  font-weight: 600; letter-spacing: 0.06em;
+  color: var(--accent); cursor: pointer;
+  padding: 12px 0 6px;
+  display: block;
+  border-top: 0.5px solid var(--rule);
+  width: 100%; text-align: left;
+}
+.notes-fine {
+  font-family: var(--font-body); font-style: italic;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  margin: 14px 0 0;
+  padding-top: 12px;
+  border-top: 0.5px solid var(--rule);
+}

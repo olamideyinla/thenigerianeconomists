@@ -1,0 +1,35 @@
+# Dependencies
+web/node_modules/
+web/.pnpm-store/
+
+# Next.js build output
+web/.next/
+web/out/
+
+# Environment variables — NEVER commit these
+web/.env
+web/.env.local
+web/.env.production
+web/.env.*.local
+
+# Prisma generated client (regenerated on install)
+web/node_modules/.prisma/
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.vscode/
+*.swp
+*.swo
+
+# pnpm
+web/.pnpm-debug.log
+
+# TypeScript build info
+web/tsconfig.tsbuildinfo
+
+# Claude Code local settings
+.claude/
+
+# Logs
+*.log

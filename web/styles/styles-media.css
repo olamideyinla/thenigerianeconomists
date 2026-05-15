@@ -1,0 +1,194 @@
+/* ═══════════════════════════════════════════════════════════════════
+   The Nigerian Economists — media styles
+   Figures, images, charts, tables, embeds — extending the design
+   language. Not present in the original prototype; added here
+   following the same visual grammar.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Figure container ────────────────────────────────────────────── */
+.article-figure {
+  margin: 24px 0;
+  border-top: 0.5px solid var(--rule);
+  border-bottom: 0.5px solid var(--rule);
+  padding: 0;
+  background: none;
+}
+
+.article-figure img,
+.article-figure svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.article-figure-caption {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  padding: 10px 0 0;
+}
+
+.article-figure-source {
+  font-family: var(--font-meta);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-faint);
+  margin-top: 4px;
+}
+
+/* Wide breakout — breaks out of the article column by --gutter each side */
+@media (min-width: 1024px) {
+  .article-figure[data-width="wide"] {
+    margin-left: calc(var(--gutter, 48px) * -1);
+    margin-right: calc(var(--gutter, 48px) * -1);
+  }
+}
+
+/* Full — spans article column edge-to-edge, no breakout */
+.article-figure[data-width="full"] {
+  /* inherits 100% width naturally */
+}
+
+/* ── Chart ───────────────────────────────────────────────────────── */
+.article-chart {
+  margin: 24px 0;
+  border-top: 0.5px solid var(--rule);
+  border-bottom: 0.5px solid var(--rule);
+  padding: 14px;
+  background: none;
+}
+
+/* ── Table ───────────────────────────────────────────────────────── */
+.article-table-wrap {
+  margin: 24px 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  /* Subtle right-edge gradient mask on mobile */
+  mask-image: linear-gradient(to right, black calc(100% - 32px), transparent);
+  -webkit-mask-image: linear-gradient(to right, black calc(100% - 32px), transparent);
+}
+
+@media (min-width: 760px) {
+  .article-table-wrap {
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+}
+
+.article-table {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 480px;
+}
+
+.article-table thead tr {
+  border-bottom: 1px solid var(--ink);
+}
+
+.article-table th {
+  font-family: var(--font-meta);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  padding: 8px 12px 8px 0;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.article-table td {
+  padding: 8px 12px 8px 0;
+  border-bottom: 0.5px solid var(--rule);
+  color: var(--ink);
+}
+
+/* Numeric columns */
+.article-table th.num,
+.article-table td.num {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  padding-right: 0;
+  padding-left: 12px;
+}
+
+/* Source row at foot */
+.article-table tfoot td {
+  font-family: var(--font-meta);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-faint);
+  border-bottom: none;
+  padding-top: 10px;
+}
+
+/* ── Embed (Datawrapper / Flourish) ──────────────────────────────── */
+.article-embed {
+  margin: 24px 0;
+}
+
+.article-embed-frame {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: var(--veil);
+  /* aspect-ratio set inline per embed */
+}
+
+.article-embed-frame iframe {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border: 0;
+}
+
+/* Loading skeleton — visible until iframe loads */
+.article-embed-frame::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    90deg,
+    var(--veil) 25%,
+    var(--rule) 50%,
+    var(--veil) 75%
+  );
+  background-size: 200% 100%;
+  animation: embed-shimmer 1.4s infinite;
+  pointer-events: none;
+}
+
+@keyframes embed-shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+
+.article-embed-frame.loaded::before { display: none; }
+
+.article-embed-credit {
+  font-family: var(--font-meta);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-faint);
+  margin-top: 6px;
+}
+
+/* ── Dark mode adjustments ───────────────────────────────────────── */
+[data-theme="dark"] .article-embed-frame {
+  background: var(--veil);
+}
+
+[data-theme="dark"] .article-table th {
+  color: var(--ink-soft);
+}
+
+[data-theme="dark"] .article-table td {
+  border-bottom-color: var(--rule);
+}

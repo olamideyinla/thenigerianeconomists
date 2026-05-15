@@ -1,0 +1,397 @@
+/* ═════════════════════════════════════════════════════════════════
+   Desktop pass — drops the bezel, opens up the measure,
+   adds the citation side rail. Mobile-first; this is layered ON TOP.
+   ═════════════════════════════════════════════════════════════════ */
+
+/* CitationRail is hidden by default (mobile); shown only on desktop */
+.citation-rail { display: none; }
+.article-shell, .article-main { display: contents; }
+
+/* ─── Desktop / wide tablet ───────────────────────────────────────
+   At 760px+ we drop the phone bezel and the status/gesture chrome,
+   let the screen become a real document. Below 760px the existing
+   phone-bezel design continues to apply. The citation side rail
+   becomes visible at 1024px+. */
+
+@media (min-width: 760px) {
+  body {
+    background: oklch(94% 0.014 75);
+    background-image: none;
+    background-attachment: scroll;
+  }
+  .stage {
+    padding: 0;
+    min-height: 100vh;
+    align-items: stretch;
+  }
+  .bezel {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+    background: var(--bg);
+    border: 0;
+  }
+  .screen {
+    border-radius: 0;
+    height: 100vh;
+  }
+  .status-bar, .gesture-bar { display: none; }
+  .splash { /* keep splash for the moment of load */ }
+  .splash-ne { font-size: 56px; }
+  .splash-the { font-size: 28px; }
+  .splash-tag { font-size: 12px; }
+
+  /* ─── Masthead becomes the broadsheet head ─────────────────────── */
+  .masthead {
+    padding: 22px 48px 18px;
+    position: relative;
+    border-bottom: 1px solid var(--ink);
+  }
+  .masthead::after {
+    content: "";
+    position: absolute; left: 48px; right: 48px;
+    bottom: -4px; height: 1px;
+    background: var(--ink);
+  }
+  .masthead > * { z-index: 1; }
+  .m-btn { width: 40px; height: 40px; }
+  .m-wordmark { gap: 2px; }
+  .m-the { font-size: 12px; }
+  .m-ne {
+    font-size: 30px;
+    letter-spacing: -0.012em;
+    font-variation-settings: "opsz" 144, "SOFT" 50;
+  }
+
+  /* ─── Page baseline at desktop width ───────────────────────────── */
+  .page {
+    --gutter: 48px;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0;
+  }
+  .page > * { padding-left: var(--gutter); padding-right: var(--gutter); }
+  .rule { margin-left: var(--gutter); margin-right: var(--gutter); padding: 0; }
+  .rule-thick { margin-top: 56px; margin-bottom: 56px; }
+  .rule-thin  { margin-top: 32px; margin-bottom: 32px; }
+
+  /* ─── HOMEPAGE on desktop ──────────────────────────────────────── */
+  .issue-strip {
+    padding-top: 28px; padding-bottom: 22px;
+  }
+  .lead-card {
+    padding-top: 56px;
+    padding-bottom: 48px;
+  }
+  .lead-headline {
+    font-size: 60px;
+    line-height: 1.02;
+    letter-spacing: -0.022em;
+    margin: 16px 0 22px;
+    max-width: 880px;
+  }
+  .lead-deck {
+    font-size: 22px;
+    line-height: 1.45;
+    max-width: 640px;
+    margin: 0 0 28px;
+  }
+  .lead-meta {
+    padding-top: 18px;
+    border-top: 0.5px solid var(--rule);
+    font-size: 12.5px;
+  }
+
+  /* Synth strip wider, more elegant */
+  .synth-strip {
+    padding: 28px var(--gutter);
+    grid-template-columns: auto 1fr auto;
+    gap: 32px;
+  }
+  .synth-strip-num { font-size: 56px; }
+  .synth-strip-body h3 { font-size: 26px; margin: 6px 0 6px; }
+  .synth-strip-meta { font-size: 11.5px; letter-spacing: 0.06em; }
+  .synth-strip-arrow { font-size: 32px; }
+
+  /* Active debates: 2-col grid */
+  .home-debates { padding-top: 8px; padding-bottom: 8px; }
+  .debates-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 40px;
+  }
+  .debate-row {
+    grid-template-columns: 36px 1fr;
+    padding: 18px 0;
+    border-top: 0.5px solid var(--rule);
+  }
+  .debate-row:nth-child(2) { border-top: 0.5px solid var(--rule); }
+  .debate-title { font-size: 22px; }
+
+  /* Feature card */
+  .feature-card {
+    padding-top: 32px; padding-bottom: 32px;
+  }
+  .feature-headline {
+    font-size: 38px;
+    line-height: 1.06;
+    margin: 12px 0 12px;
+    max-width: 720px;
+  }
+  .feature-deck {
+    font-size: 19px;
+    margin: 0 0 16px;
+    max-width: 640px;
+  }
+
+  /* Pair → 4 columns for the tertiary  */
+  .pair {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 32px;
+  }
+  .pair-card { grid-column: span 2; }
+  .pair-headline { font-size: 22px; line-height: 1.18; }
+
+  /* Earlier this week list — 2 columns */
+  .home-list ul {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 40px;
+  }
+  .home-list li:nth-child(2) { border-top: 0.5px solid var(--rule); }
+  .hl-head { font-size: 22px; }
+
+  /* News CTA full-width and centred */
+  .news-cta {
+    margin: 0;
+    padding: 56px var(--gutter);
+  }
+  .news-cta h3 { font-size: 38px; margin: 12px 0 14px; max-width: 800px; }
+  .news-cta p  { font-size: 18px; margin: 0 0 18px; max-width: 720px; }
+  .news-cta-arrow {
+    font-size: 13px;
+    border: 1px solid currentColor;
+    padding: 12px 22px;
+    display: inline-block;
+  }
+
+  /* ─── DRAWER on desktop — bigger ───────────────────────────────── */
+  .drawer-panel {
+    width: 440px;
+  }
+
+  /* ─── ARTICLE PAGE on desktop ─────────────────────────────────── */
+  .page-article { max-width: 1280px; padding: 0; }
+  .page-article > * { padding-left: 0; padding-right: 0; }
+  .page-article .reading-progress {
+    margin: 0; height: 2px;
+  }
+
+  /* Single-column article between 760 and 1024 */
+  .article-shell { display: block; padding: 0 var(--gutter); }
+  .article-main { display: block; max-width: 720px; margin: 0 auto; width: 100%; }
+  .article-main > * { padding-left: 0; padding-right: 0; }
+
+  .article-head { padding-top: 16px; }
+  .article-headline { font-size: 64px; line-height: 1.02; margin: 18px 0 22px; letter-spacing: -0.024em; }
+  .article-deck { font-size: 22px; margin-bottom: 28px; }
+  .article-kicker-row { padding-top: 24px; }
+  .article-body { padding-top: 16px; }
+  .article-body .article-h2 { font-size: 28px; margin-top: 36px; }
+  .article-body .para { line-height: 1.7; }
+  .article-body .para-drop::first-letter { font-size: 84px; }
+  .pullquote { margin: 40px 0; padding: 24px 0 22px; }
+  .pullquote blockquote { font-size: 30px; }
+
+  /* Citation Rail styling lives in the 1024px+ block below */
+
+  /* References list still appears below — repeats the rail content
+     but in full formal form. Keep it. */
+  .refs { padding-top: 16px; }
+  .responses, .notes, .author-card, .related {
+    padding-top: 24px; padding-bottom: 24px;
+  }
+
+  /* Like bar wider */
+  .like-bar { padding: 16px 0 18px; }
+
+  /* ─── SYNTHESIS ─────────────────────────────────────────────── */
+  .synth-headline { font-size: 60px; line-height: 1.02; }
+  .synth-deck { font-size: 22px; max-width: 720px; }
+  .synth-head { padding-bottom: 32px; }
+  .synth-map {
+    padding-top: 40px;
+    max-width: 880px;
+    margin: 0 auto;
+  }
+  .page-synthesis .synth-map { padding-left: var(--gutter); padding-right: var(--gutter); }
+  .synth-thread { grid-template-columns: 56px 1fr; }
+  .synth-thread-num { font-size: 36px; }
+  .synth-thread-title { font-size: 28px; }
+  .synth-thread-summary { font-size: 18px; }
+  .synth-editorial { max-width: 720px; margin: 0 auto; padding-bottom: 48px; }
+  .page-synthesis .synth-editorial { padding-left: var(--gutter); padding-right: var(--gutter); }
+  .synth-editorial p { font-size: 19px; }
+
+  /* ─── REBUTTAL INDEX ─────────────────────────────────────────── */
+  .ri-title { font-size: 56px; line-height: 1.02; }
+  .ri-deck { font-size: 20px; max-width: 720px; }
+  .ri-toggle { margin: 0 var(--gutter) 32px; max-width: 320px; }
+  .ri-list {
+    margin: 0 var(--gutter);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 56px;
+  }
+  .page-rebuttals .ri-list { padding: 0; }
+  .ri-thread { padding: 24px 0 32px; }
+
+  .atlas-wrap { max-width: 880px; margin: 0 auto; }
+  .atlas { height: 820px; max-width: 540px; margin: 0 auto; }
+
+  /* ─── TOPIC PAGE ────────────────────────────────────────────── */
+  .topic-title { font-size: 64px; line-height: 1.02; }
+  .topic-deck { font-size: 19px; max-width: 720px; }
+  .topic-list {
+    margin: 0 var(--gutter);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 56px;
+  }
+  .page-topic .topic-list { padding: 0; }
+  .tl-head { font-size: 26px; }
+
+  /* ─── NEWSLETTER ────────────────────────────────────────────── */
+  .news-title { font-size: 56px; line-height: 1.02; }
+  .news-deck  { font-size: 20px; max-width: 720px; }
+  .news-form, .news-archive, .news-thanks {
+    max-width: 600px; margin: 0 auto;
+  }
+  .page-newsletter .news-form,
+  .page-newsletter .news-archive,
+  .page-newsletter .news-thanks {
+    padding-left: var(--gutter); padding-right: var(--gutter);
+  }
+  .news-prefs label { font-size: 17px; }
+
+  /* ─── FOOTER ────────────────────────────────────────────────── */
+  .site-foot {
+    margin: 0;
+    padding: 48px 64px 40px;
+  }
+  .sf-cols {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 40px;
+  }
+  .sf-ne { font-size: 28px; }
+
+  /* ─── TWEAKS panel position ──────────────────────────────────── */
+  .twk-panel { right: 32px; bottom: 32px; }
+}
+
+/* Wider — the article gets a citation side rail from 1024px up */
+@media (min-width: 1024px) {
+  .article-shell {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+    gap: 56px;
+    padding: 0 48px 64px;
+    align-items: start;
+  }
+  .article-main {
+    min-width: 0;
+    max-width: 720px;
+    margin: 0;
+    justify-self: end;
+  }
+
+  /* Citation Rail */
+  .citation-rail {
+    display: block;
+    position: sticky;
+    top: 32px;
+    align-self: start;
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+    padding: 22px 0 22px 24px;
+    border-left: 0.5px solid var(--rule);
+    font-family: var(--font-body);
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--ink-soft);
+  }
+  .citation-rail::-webkit-scrollbar { width: 4px; }
+  .citation-rail::-webkit-scrollbar-thumb { background: var(--rule); }
+  .rail-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .rail-count {
+    font-family: var(--font-meta); font-size: 10.5px;
+    color: var(--ink-faint);
+  }
+  .rail-list { list-style: none; padding: 0; margin: 0; }
+  .rail-item {
+    margin: 0;
+    border-bottom: 0.5px solid var(--rule);
+    transition: background 0.2s ease;
+  }
+  .rail-btn {
+    appearance: none; border: 0; background: transparent;
+    width: 100%; padding: 10px 8px 10px 4px;
+    display: grid; grid-template-columns: 22px 1fr; gap: 8px;
+    text-align: left; cursor: pointer;
+    color: inherit;
+  }
+  .rail-num {
+    font-family: var(--font-meta);
+    font-size: 10.5px; font-weight: 700;
+    color: var(--ink-faint);
+    padding-top: 2px;
+    font-variant-numeric: tabular-nums;
+  }
+  .rail-body { display: block; color: var(--ink-soft); transition: color 0.2s ease; }
+  .rail-author { font-family: var(--font-meta); font-size: 11px; font-weight: 600; }
+  .rail-year { font-family: var(--font-meta); font-size: 11px; }
+  .rail-title-line {
+    display: block;
+    font-style: italic;
+    font-size: 13px; line-height: 1.35;
+    margin-top: 2px;
+    color: var(--ink-soft);
+  }
+  .rail-item.active {
+    background: var(--accent-veil);
+    margin: 0 -8px;
+  }
+  .rail-item.active .rail-btn { padding: 10px 16px 10px 12px; }
+  .rail-item.active .rail-num { color: var(--accent); }
+  .rail-item.active .rail-body,
+  .rail-item.active .rail-title-line { color: var(--ink); }
+  .rail-item.open {
+    background: var(--accent);
+  }
+  .rail-item.open .rail-num,
+  .rail-item.open .rail-author,
+  .rail-item.open .rail-year,
+  .rail-item.open .rail-title-line,
+  .rail-item.open .rail-body { color: var(--bg); }
+
+  .rail-note {
+    margin-top: 14px; padding-top: 12px;
+    border-top: 0.5px solid var(--rule);
+    font-family: var(--font-body); font-style: italic;
+    font-size: 12px; line-height: 1.45;
+    color: var(--ink-faint);
+  }
+}
+
+/* Even wider — slight upgrades for >= 1280px */
+@media (min-width: 1280px) {
+  .lead-headline { font-size: 104px; letter-spacing: -0.028em; }
+  .article-shell { gap: 80px; padding: 0 64px 80px; }
+  .article-main { max-width: 760px; }
+  .article-headline { font-size: 72px; }
+}

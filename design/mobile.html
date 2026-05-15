@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Nigerian Economist — mobile preview</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body {
+    background:
+      radial-gradient(at 20% 10%, oklch(95% 0.015 80) 0%, transparent 50%),
+      radial-gradient(at 80% 90%, oklch(92% 0.018 60) 0%, transparent 50%),
+      linear-gradient(180deg, oklch(94% 0.015 75), oklch(90% 0.018 70));
+    background-attachment: fixed;
+    min-height: 100vh;
+    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+    color: oklch(20% 0.008 65);
+    display: flex; flex-direction: column; align-items: center;
+    padding: 28px 16px 60px;
+  }
+  header { width: 100%; max-width: 720px; margin-bottom: 22px; }
+  .kicker {
+    font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: oklch(40% 0.008 65); font-weight: 600;
+  }
+  h1 {
+    font-size: 22px; font-weight: 500; margin: 6px 0 4px;
+    letter-spacing: -0.012em;
+  }
+  p.note {
+    font-size: 14px; line-height: 1.5; color: oklch(40% 0.008 65);
+    margin: 0;
+  }
+  .controls {
+    display: inline-flex; gap: 6px; padding: 4px;
+    background: rgba(255,255,255,0.6);
+    border: 0.5px solid rgba(0,0,0,0.08);
+    border-radius: 100px;
+    margin-top: 14px;
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  }
+  .controls button {
+    appearance: none; border: 0; background: transparent; cursor: pointer;
+    font: 600 11.5px/1 ui-sans-serif, system-ui, -apple-system, sans-serif;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: oklch(40% 0.008 65);
+    padding: 9px 14px; border-radius: 100px;
+  }
+  .controls button[aria-pressed="true"] {
+    background: oklch(20% 0.008 65); color: oklch(96% 0.018 80);
+  }
+  .frame-wrap {
+    margin-top: 26px;
+    display: flex; justify-content: center;
+  }
+  .bezel {
+    /* Phone bezel re-created here so the user sees it on desktop */
+    border-radius: 48px;
+    padding: 11px;
+    background: linear-gradient(160deg, #1a1816, #2a2622 50%, #1a1816);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.04) inset,
+      0 0 0 1px rgba(0,0,0,0.5),
+      0 40px 100px rgba(20, 15, 10, 0.35),
+      0 8px 28px rgba(20, 15, 10, 0.25);
+  }
+  iframe {
+    display: block;
+    border: 0;
+    border-radius: 38px;
+    background: oklch(96% 0.018 80);
+    width: 375px;
+    height: 812px;
+    transition: width 0.25s ease, height 0.25s ease;
+  }
+  .bezel[data-size="se"]      iframe { width: 320px; height: 568px; }
+  .bezel[data-size="iphone"]  iframe { width: 375px; height: 812px; }
+  .bezel[data-size="pixel"]   iframe { width: 412px; height: 892px; }
+  .bezel[data-size="iphone"]  { border-radius: 48px; }
+  .bezel[data-size="se"]      { border-radius: 38px; }
+  .bezel[data-size="pixel"]   { border-radius: 38px; }
+  footer { margin-top: 22px; font-size: 11.5px; color: oklch(45% 0.008 65); }
+  footer a { color: inherit; }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="kicker">Mobile preview</span>
+  <h1>The Nigerian Economist, at phone width</h1>
+  <p class="note">
+    The prototype is mobile-first; this view boxes it into a phone-sized iframe so you can review the mobile experience on a desktop screen. Switch device sizes below, or
+    <a href="index.html">open the full prototype</a> to see the desktop layout.
+  </p>
+  <div class="controls" role="tablist" aria-label="Device size">
+    <button role="tab" aria-pressed="false" data-size="se">iPhone&nbsp;SE · 320</button>
+    <button role="tab" aria-pressed="true"  data-size="iphone">iPhone · 375</button>
+    <button role="tab" aria-pressed="false" data-size="pixel">Pixel · 412</button>
+  </div>
+</header>
+
+<div class="frame-wrap">
+  <div class="bezel" data-size="iphone">
+    <iframe id="phone" src="index.html" title="The Nigerian Economist (mobile)"></iframe>
+  </div>
+</div>
+
+<footer>
+  ← Back to the <a href="index.html">desktop / responsive prototype</a>
+</footer>
+
+<script>
+  const bezel = document.querySelector('.bezel');
+  document.querySelectorAll('.controls button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.controls button').forEach(x => x.setAttribute('aria-pressed', 'false'));
+      b.setAttribute('aria-pressed', 'true');
+      bezel.dataset.size = b.dataset.size;
+    });
+  });
+</script>
+
+</body>
+</html>

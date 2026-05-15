@@ -1,0 +1,53 @@
+/* ═══════════════════════════════════════════════════════════════════
+   The Nigerian Economists — design tokens
+   Derived from ACCENTS, BG_TONES, TYPE_PAIRS in the design prototype.
+   Default: Ochre accent · Cream paper · Fraunces / Newsreader
+   ══════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Accent (Ochre #a35a1c) ──────────────────────────────────── */
+  --accent:      oklch(52% 0.13 55);
+  --accent-soft: oklch(52% 0.13 55 / 0.10);
+  --accent-veil: oklch(52% 0.13 55 / 0.05);
+
+  /* ── Paper (Cream) ───────────────────────────────────────────── */
+  --bg:        oklch(96% 0.018 80);
+  --ink:       oklch(20% 0.008 65);
+  --ink-soft:  oklch(40% 0.008 65);
+  --ink-faint: oklch(65% 0.006 65);
+  --rule:      oklch(82% 0.012 70);
+  --veil:      oklch(92% 0.014 75);
+
+  /* ── Type pair (Fraunces / Newsreader / Public Sans) ─────────── */
+  --font-display: var(--font-fraunces, 'Fraunces', Georgia, serif);
+  --font-body:    var(--font-newsreader, 'Newsreader', Georgia, serif);
+  --font-meta:    var(--font-public-sans, 'Public Sans', system-ui, sans-serif);
+  --body-size:    18px;
+
+  /* ── Chart palette ───────────────────────────────────────────── */
+  --chart-axis-font:   var(--font-meta);
+  --chart-axis-size:   11px;
+  --chart-label-color: var(--ink-soft);
+  --chart-grid-color:  var(--rule);
+  --chart-series-1:    var(--accent);
+  --chart-series-2:    var(--ink);
+  --chart-series-3:    oklch(60% 0.08 200);
+  --chart-series-4:    oklch(55% 0.10 140);
+  --chart-series-5:    oklch(50% 0.09 30);
+}
+
+/* ── Dark mode ───────────────────────────────────────────────────── */
+[data-theme="dark"] {
+  --accent:    oklch(74% 0.13 65);
+  --bg:        oklch(17% 0.006 60);
+  --ink:       oklch(92% 0.008 75);
+  --ink-soft:  oklch(75% 0.008 75);
+  --ink-faint: oklch(45% 0.006 65);
+  --rule:      oklch(28% 0.006 60);
+  --veil:      oklch(22% 0.008 60);
+
+  /* Chart series adjusted for dark backgrounds */
+  --chart-series-3: oklch(65% 0.09 200);
+  --chart-series-4: oklch(62% 0.11 140);
+  --chart-series-5: oklch(58% 0.10 30);
+}
