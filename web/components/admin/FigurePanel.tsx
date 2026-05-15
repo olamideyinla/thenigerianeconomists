@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { createFigure, deleteFigure } from '@/app/admin/articles/[id]/actions'
+import { createFigure, deleteFigure } from '@/app/admin/(protected)/articles/[id]/actions'
 import { FigureEditorDialog } from './FigureEditorDialog'
 
 interface FigureRow {

@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { Button } from '@/components/ui/button'
-import { createReference, updateReference, deleteReference } from '@/app/admin/articles/[id]/actions'
+import { createReference, updateReference, deleteReference } from '@/app/admin/(protected)/articles/[id]/actions'
 
 interface Ref {
   id: string

@@ -11,7 +11,7 @@ import {
   saveArticleDraft,
   publishArticle,
   validateArticle,
-} from '@/app/admin/articles/[id]/actions'
+} from '@/app/admin/(protected)/articles/[id]/actions'
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false })
 
@@ -290,7 +290,7 @@ function RebuttalPanelPlaceholder({ articleId }: { articleId: string }) {
 
   async function handle() {
     if (!targetSlug.trim()) return
-    const { linkRebuttal } = await import('@/app/admin/articles/[id]/actions')
+    const { linkRebuttal } = await import('@/app/admin/(protected)/articles/[id]/actions')
     await linkRebuttal(articleId, targetSlug.trim(), stance)
     setMsg('Linked!')
     setTimeout(() => setMsg(''), 2000)

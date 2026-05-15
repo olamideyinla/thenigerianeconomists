@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { Button } from '@/components/ui/button'
-import { saveArticleDraft } from '@/app/admin/articles/[id]/actions'
+import { saveArticleDraft } from '@/app/admin/(protected)/articles/[id]/actions'
 
 interface MetadataPanelProps {
   article: {

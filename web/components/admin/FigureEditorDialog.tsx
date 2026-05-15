@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { updateFigure } from '@/app/admin/articles/[id]/actions'
+import { updateFigure } from '@/app/admin/(protected)/articles/[id]/actions'
 
 interface FigureRow {
   id: string
