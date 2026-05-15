@@ -4,12 +4,18 @@ import { useEffect } from 'react'
 import Link from 'next/link'
 
 const SECTIONS = [
-  { slug: 'monetary-policy',  name: 'Monetary Policy',  count: 24 },
-  { slug: 'fiscal-policy',    name: 'Fiscal Policy',    count: 18 },
-  { slug: 'trade',            name: 'Trade',            count: 11 },
-  { slug: 'labour',           name: 'Labour',           count: 9  },
-  { slug: 'development',      name: 'Development',      count: 14 },
-  { slug: 'financial-sector', name: 'Financial Sector', count: 16 },
+  { slug: 'fx',          name: 'FX & Monetary Policy',  count: 47 },
+  { slug: 'fiscal',      name: 'Fiscal Policy',         count: 38 },
+  { slug: 'banking',     name: 'Banking & Finance',     count: 31 },
+  { slug: 'behavioural', name: 'Behavioural Economics', count: 31 },
+  { slug: 'political',   name: 'Political Economy',     count: 26 },
+  { slug: 'welfare',     name: 'Welfare Economics',     count: 24 },
+  { slug: 'subsidy',     name: 'Subsidy & Energy',      count: 22 },
+  { slug: 'capital',     name: 'Capital Markets',       count: 21 },
+  { slug: 'labour',      name: 'Labour & Inflation',    count: 19 },
+  { slug: 'subnation',   name: 'Subnational',           count: 18 },
+  { slug: 'trade',       name: 'Trade & AfCFTA',        count: 14 },
+  { slug: 'health',      name: 'Health Economics',      count: 12 },
 ]
 
 interface SideMenuProps {
@@ -18,14 +24,18 @@ interface SideMenuProps {
 }
 
 export function SideMenu({ open, onClose }: SideMenuProps) {
-  // Close on Escape key
+  // Close on Escape key + lock body scroll while open
   useEffect(() => {
     if (!open) return
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
     }
     window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      window.removeEventListener('keydown', handler)
+      document.body.style.overflow = ''
+    }
   }, [open, onClose])
 
   return (

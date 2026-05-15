@@ -201,7 +201,8 @@ body {
 }
 
 /* ─── Drawer ───────────────────────────────────────────────────── */
-.drawer { position: absolute; inset: 0; z-index: 50; pointer-events: none; }
+/* position: fixed so the overlay covers the viewport regardless of scroll */
+.drawer { position: fixed; inset: 0; z-index: 50; pointer-events: none; }
 .drawer.open { pointer-events: auto; }
 .drawer-scrim {
   position: absolute; inset: 0;
@@ -218,17 +219,21 @@ body {
   transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex; flex-direction: column;
   padding-top: env(safe-area-inset-top);
+  overflow-y: auto;
 }
 .drawer.open .drawer-panel { transform: translateX(0); }
 .drawer-head {
   display: flex; align-items: center; justify-content: space-between;
   padding: 22px 22px 16px;
   border-bottom: 0.5px solid var(--rule);
+  flex-shrink: 0;
 }
 .drawer-list {
   list-style: none; padding: 12px 0; margin: 0;
   flex: 1; overflow-y: auto;
 }
+/* Target both <button> (design prototype) and <a> (Next.js Links) */
+.drawer-list a,
 .drawer-list button {
   appearance: none; border: 0; background: transparent;
   width: 100%; padding: 13px 22px;
@@ -239,13 +244,16 @@ body {
   font-variation-settings: "opsz" 144, "SOFT" 30;
   color: var(--ink); text-align: left;
   letter-spacing: -0.005em;
+  text-decoration: none;
 }
+.drawer-list a:hover,
 .drawer-list button:hover { background: var(--accent-veil); }
 .dl-count {
   font-family: var(--font-meta); font-size: 11px;
   color: var(--ink-faint); font-variant-numeric: tabular-nums;
 }
-.drawer-divider { height: 0; border-top: 0.5px solid var(--rule); margin: 4px 22px; }
+.drawer-divider { height: 0; border-top: 0.5px solid var(--rule); margin: 4px 22px; flex-shrink: 0; }
+.drawer-list.secondary a,
 .drawer-list.secondary button {
   font-size: 15px;
   font-family: var(--font-body);
@@ -257,6 +265,7 @@ body {
   padding: 16px 22px 28px;
   border-top: 0.5px solid var(--rule);
   display: flex; justify-content: space-between; align-items: baseline;
+  flex-shrink: 0;
 }
 .drawer-tag { font-family: var(--font-meta); font-size: 10px; color: var(--ink-faint); }
 
