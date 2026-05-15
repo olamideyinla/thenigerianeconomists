@@ -5,6 +5,7 @@ import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { writeAuditLog } from '@/lib/audit'
 import { indexArticle, removeFromIndex, mdxToSearchText } from '@/lib/search'
+import { getResend } from '@/lib/email'
 
 // ── Auth guard ────────────────────────────────────────────────────
 
@@ -126,7 +127,83 @@ export async function publishArticle(id: string): Promise<{ errors?: string[] }>
   revalidatePath(`/admin/articles`)
   revalidatePath(`/admin/articles/${id}`)
   revalidatePath(`/articles/${article.slug}`)
+
+  // ── Rebuttal alert notifications ─────────────────────────────────
+  // If this article is a rebuttal of another, notify subscribers of the original.
+  void sendRebuttalNotifications(article.id, article.slug, article.headline).catch(
+    (e) => console.error('[rebuttal-alert] notification failed', e),
+  )
+
   return {}
+}
+
+async function sendRebuttalNotifications(
+  rebuttalArticleId: string,
+  rebuttalSlug: string,
+  rebuttalHeadline: string,
+) {
+  // Find all original articles that this article rebuts
+  const rebuttalLinks = await db.rebuttal.findMany({
+    where: { rebuttalArticleId },
+    include: {
+      originalArticle: {
+        select: {
+          id: true,
+          slug: true,
+          headline: true,
+          rebuttalAlerts: { select: { email: true } },
+        },
+      },
+      rebuttalArticle: {
+        select: { author: { select: { name: true } } },
+      },
+    },
+  })
+
+  if (rebuttalLinks.length === 0) return
+
+  const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://thenigerianeconomists.com'
+  const FROM = 'The Nigerian Economist <noreply@thenigerianeconomists.com>'
+  const resend = getResend()
+
+  for (const link of rebuttalLinks) {
+    const original = link.originalArticle
+    const subscribers = original.rebuttalAlerts
+    if (subscribers.length === 0) continue
+
+    const authorName = link.rebuttalArticle.author.name
+
+    const messages = subscribers.map(({ email }) => {
+      const unsubUrl = `${SITE}/api/articles/${original.slug}/rebuttal-alert/unsubscribe?email=${encodeURIComponent(email)}`
+      return {
+        from: FROM,
+        to: email,
+        subject: `New response to "${original.headline}" — The Nigerian Economists`,
+        html: `
+          <p>A new response to an article you are following has been published:</p>
+          <p style="font-weight:600;font-size:1.05rem">"${original.headline}"</p>
+          <p style="margin-top:1rem">Response article:</p>
+          <p>
+            <a href="${SITE}/articles/${rebuttalSlug}" style="color:#b45309;font-weight:600;font-size:1rem">${rebuttalHeadline}</a><br/>
+            <span style="font-size:0.875rem;color:#555">by ${authorName}</span>
+          </p>
+          <p style="margin-top:1rem">
+            <a href="${SITE}/articles/${original.slug}" style="color:#b45309">Read the original article &rarr;</a>
+          </p>
+          <hr style="border:none;border-top:1px solid #e5e7eb;margin:1.5rem 0"/>
+          <p style="font-size:0.8rem;color:#888">
+            <a href="${unsubUrl}" style="color:#888">Unsubscribe from rebuttal alerts for this article</a>
+          </p>
+        `,
+      }
+    })
+
+    // Resend batch supports up to 100 per call
+    const CHUNK = 100
+    for (let i = 0; i < messages.length; i += CHUNK) {
+      await resend.batch.send(messages.slice(i, i + CHUNK))
+    }
+  }
 }
 
 // ── References ────────────────────────────────────────────────────

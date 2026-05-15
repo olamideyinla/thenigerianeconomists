@@ -179,14 +179,15 @@ model Article {
   author Author @relation(fields: [authorId], references: [id])
   topic  Topic  @relation(fields: [topicId], references: [id])
 
-  references   Reference[]
-  figures      Figure[]
-  corrections  Correction[]
-  rebuttedBy   Rebuttal[]       @relation("OriginalArticle")
-  rebuttals    Rebuttal[]       @relation("RebuttalArticle")
-  syntheses    SynthesisArticle[]
-  endorsements Endorsement[]
-  readerNotes  ReaderNote[]
+  references     Reference[]
+  figures        Figure[]
+  corrections    Correction[]
+  rebuttedBy     Rebuttal[]       @relation("OriginalArticle")
+  rebuttals      Rebuttal[]       @relation("RebuttalArticle")
+  syntheses      SynthesisArticle[]
+  endorsements   Endorsement[]
+  readerNotes    ReaderNote[]
+  rebuttalAlerts RebuttalAlert[]
 
   @@index([slug])
   @@index([status])
@@ -220,6 +221,19 @@ model Rebuttal {
 
   originalArticle Article @relation("OriginalArticle",  fields: [originalArticleId], references: [id])
   rebuttalArticle Article @relation("RebuttalArticle", fields: [rebuttalArticleId], references: [id])
+}
+
+model RebuttalAlert {
+  id        String   @id @default(cuid())
+  articleId String
+  email     String
+  userId    String?
+  createdAt DateTime @default(now())
+
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@unique([articleId, email])
+  @@index([articleId])
 }
 
 model Synthesis {

@@ -15,6 +15,7 @@ import { ReaderNotes } from '@/components/reader/ReaderNotes'
 import { ReadingProgress } from '@/components/reader/ReadingProgress'
 import { RebuttalIndicator } from '@/components/reader/RebuttalIndicator'
 import { RebuttalThread } from '@/components/reader/RebuttalThread'
+import { RebuttalAlertButton } from '@/components/reader/RebuttalAlertButton'
 import { ArticleClientShell } from './ArticleClientShell'
 import type { RefItem } from '@/context/ReferenceContext'
 import type { FigureShape } from '@/context/FigureContext'
@@ -88,11 +89,17 @@ export default async function ArticlePage({ params }: PageProps) {
 
   // ── Endorsement count + current-user status ───────────────────────
 
-  const [endorsementCount, userEndorsement] = await Promise.all([
+  const [endorsementCount, userEndorsement, userRebuttalAlert] = await Promise.all([
     db.endorsement.count({ where: { articleId: article.id } }),
     userId
       ? db.endorsement.findUnique({
           where: { articleId_userId: { articleId: article.id, userId } },
+          select: { id: true },
+        })
+      : Promise.resolve(null),
+    userId && session?.user?.email
+      ? db.rebuttalAlert.findUnique({
+          where: { articleId_email: { articleId: article.id, email: session.user.email } },
           select: { id: true },
         })
       : Promise.resolve(null),
@@ -243,6 +250,14 @@ export default async function ArticlePage({ params }: PageProps) {
             {rebuttalEntries.length > 0 && (
               <RebuttalIndicator rebuttals={rebuttalEntries} variant="block" />
             )}
+
+            <div style={{ marginTop: '0.75rem' }}>
+              <RebuttalAlertButton
+                articleSlug={article.slug}
+                initialSubscribed={!!userRebuttalAlert}
+                isAuthenticated={!!userId}
+              />
+            </div>
           </header>
 
           {/* ── Like bar + share buttons ───────────────────────── */}
