@@ -132,10 +132,13 @@ export function htmlToMdx(html: string): string {
   s = decodeEntities(s)
 
   // 9. Escape bare `<` for MDX.
-  //    After stripping tags, any remaining `<` is literal text content.
-  //    MDX tries to parse `<` as a JSX element opener and errors if it can't.
-  //    `\<` is the correct MDX escape for a literal less-than sign.
-  s = s.replace(/</g, '\\<')
+  //    After stripping all tags and decoding entities, any remaining `<`
+  //    is a literal less-than character in text (e.g. "GDP fell <3%").
+  //    MDX's JSX parser errors on `<` followed by a digit or unexpected char.
+  //    The correct MDX-safe encoding is the HTML entity `&lt;` — Markdown
+  //    and React both decode it to `<` at render time.  (`\<` does NOT work
+  //    with the MDX/acorn JSX parser in next-mdx-remote.)
+  s = s.replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
   // 10. Normalise whitespace
   s = s.replace(/\n{3,}/g, '\n\n').trim()
