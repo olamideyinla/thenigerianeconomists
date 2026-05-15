@@ -109,6 +109,13 @@ enum FunderType {
   READER_REVENUE
 }
 
+enum SubmissionStatus {
+  PENDING
+  UNDER_REVIEW
+  ACCEPTED
+  REJECTED
+}
+
 // ─── Editorial entities ───────────────────────────────────────────
 
 model Author {
@@ -382,6 +389,7 @@ model User {
   endorsements   Endorsement[]
   readerNotes    ReaderNote[]
   moderatedNotes ReaderNote[]  @relation("Moderator")
+  submissions    Submission[]
 }
 
 // Auth.js required models
@@ -503,5 +511,26 @@ model AuditLog {
 
   @@index([userId])
   @@index([entityType, entityId])
+  @@index([createdAt])
+}
+
+model Submission {
+  id            String           @id @default(cuid())
+  userId        String?
+  email         String
+  name          String
+  headline      String
+  body          String           // full article text as submitted
+  wordCount     Int
+  affiliation   String?
+  coiDisclosure String?
+  status        SubmissionStatus @default(PENDING)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([email])
+  @@index([status])
   @@index([createdAt])
 }

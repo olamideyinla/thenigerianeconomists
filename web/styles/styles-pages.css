@@ -805,3 +805,225 @@
 
 .account-btn:hover:not(:disabled) { opacity: 0.85; }
 .account-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ─── Contribute / submit page ───────────────────────────────── */
+
+.page-contribute {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+}
+
+.contribute-header {
+  margin-bottom: 2.5rem;
+}
+
+.contribute-title {
+  font-family: var(--font-fraunces, serif);
+  font-size: 2.25rem;
+  font-weight: 500;
+  line-height: 1.1;
+  margin: 0.5rem 0 1rem;
+}
+
+.contribute-desc {
+  font-size: 1.0625rem;
+  color: var(--ink-2, #444);
+  line-height: 1.65;
+  max-width: 640px;
+}
+
+.contribute-guidelines {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+.contribute-guide-head {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3, #888);
+  margin-bottom: 0.75rem;
+}
+
+.contribute-list {
+  padding-left: 1.25rem;
+  line-height: 1.75;
+  color: var(--ink-2, #444);
+  font-size: 0.9375rem;
+  margin: 0;
+}
+
+.contribute-form-section {
+  margin-top: 2.5rem;
+}
+
+.contribute-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.contribute-byline {
+  font-size: 0.875rem;
+  color: var(--ink-2, #555);
+}
+
+.contribute-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.contribute-label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.contribute-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ink, #222);
+  letter-spacing: 0.01em;
+}
+
+.contribute-req {
+  color: var(--accent, #b45309);
+}
+
+.contribute-hint-inline {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--ink-3, #888);
+}
+
+.contribute-wordcount {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+
+.contribute-input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--rule, #ccc);
+  border-radius: 3px;
+  font-size: 0.9375rem;
+  font-family: var(--font-body, serif);
+  background: var(--bg, #fff);
+  color: var(--ink, #222);
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+
+.contribute-input:focus {
+  outline: none;
+  border-color: var(--accent, #b45309);
+}
+
+.contribute-body {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--rule, #ccc);
+  border-radius: 3px;
+  font-size: 1rem;
+  font-family: var(--font-body, serif);
+  line-height: 1.75;
+  background: var(--bg, #fff);
+  color: var(--ink, #222);
+  box-sizing: border-box;
+  resize: vertical;
+  min-height: 420px;
+  transition: border-color 0.15s;
+}
+
+.contribute-body:focus {
+  outline: none;
+  border-color: var(--accent, #b45309);
+}
+
+.contribute-hint {
+  font-size: 0.8125rem;
+  margin: 0.25rem 0 0;
+}
+
+.contribute-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.contribute-error {
+  font-size: 0.875rem;
+  color: #b91c1c;
+  padding: 10px 12px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 3px;
+  margin: 0;
+}
+
+.contribute-submit {
+  align-self: flex-start;
+  padding: 10px 28px;
+  background: var(--ink, #222);
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-family: var(--font-body, sans-serif);
+}
+
+.contribute-submit:hover:not(:disabled) { background: var(--accent, #b45309); }
+.contribute-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.contribute-success {
+  padding: 2rem;
+  background: var(--bg-2, #f5f0e8);
+  border-left: 3px solid var(--accent, #b45309);
+  border-radius: 2px;
+}
+
+.contribute-success-head {
+  font-family: var(--font-fraunces, serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.contribute-success-body {
+  font-size: 0.9375rem;
+  color: var(--ink-2, #444);
+  line-height: 1.65;
+  margin: 0;
+}
+
+.contribute-signin-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+
+.contribute-signin-text {
+  font-size: 0.9375rem;
+  color: var(--ink-2, #444);
+  line-height: 1.65;
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  .contribute-guidelines { grid-template-columns: 1fr; gap: 1.5rem; }
+  .contribute-row-2 { grid-template-columns: 1fr; }
+  .contribute-title { font-size: 1.75rem; }
+}

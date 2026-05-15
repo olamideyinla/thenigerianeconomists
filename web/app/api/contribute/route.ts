@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
+import { db } from '@/lib/db'
 import { getResend } from '@/lib/email'
 
 export const dynamic = 'force-dynamic'
@@ -12,35 +13,65 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json() as {
     headline?: string
-    abstract?: string
-    wordCount?: string
+    body?: string
     affiliation?: string
     coiDisclosure?: string
   }
 
-  const { headline, abstract, wordCount } = body
-  if (!headline?.trim() || !abstract?.trim() || !wordCount) {
-    return NextResponse.json({ error: 'headline, abstract and wordCount are required' }, { status: 400 })
+  const { headline, body: articleBody, affiliation, coiDisclosure } = body
+
+  if (!headline?.trim()) {
+    return NextResponse.json({ error: 'A headline is required.' }, { status: 400 })
+  }
+  if (!articleBody?.trim()) {
+    return NextResponse.json({ error: 'Article body is required.' }, { status: 400 })
   }
 
-  const resend = getResend()
-  const editorialEmail = process.env.AUTH_ADMIN_EMAIL ?? 'thenigerianeconomists@gmail.com'
+  const wordCount = articleBody.trim().split(/\s+/).filter(Boolean).length
 
-  await resend.emails.send({
-    from: 'The Nigerian Economist <noreply@updates.thenigerianeconomists.com>',
-    to: editorialEmail,
-    subject: `[Pitch] ${headline.trim()}`,
-    html: `
-      <p><strong>From:</strong> ${session.user.name ?? ''} &lt;${session.user.email}&gt;</p>
-      <p><strong>Headline:</strong> ${headline.trim()}</p>
-      <p><strong>Word count:</strong> ${wordCount}</p>
-      ${body.affiliation ? `<p><strong>Affiliation:</strong> ${body.affiliation}</p>` : ''}
-      ${body.coiDisclosure ? `<p><strong>COI disclosure:</strong> ${body.coiDisclosure}</p>` : ''}
-      <hr />
-      <p><strong>Abstract:</strong></p>
-      <p style="white-space:pre-wrap">${abstract.trim()}</p>
-    `,
-  })
+  if (wordCount < 800) {
+    return NextResponse.json({ error: `Your article is ${wordCount} words. Minimum is 800.` }, { status: 400 })
+  }
+  if (wordCount > 5000) {
+    return NextResponse.json({ error: `Your article is ${wordCount} words. Maximum is 5,000.` }, { status: 400 })
+  }
 
-  return NextResponse.json({ ok: true })
+  try {
+    const submission = await db.submission.create({
+      data: {
+        userId: session.user.id ?? null,
+        email: session.user.email,
+        name: session.user.name ?? session.user.email,
+        headline: headline.trim(),
+        body: articleBody.trim(),
+        wordCount,
+        affiliation: affiliation?.trim() || null,
+        coiDisclosure: coiDisclosure?.trim() || null,
+      },
+    })
+
+    const resend = getResend()
+    const editorialEmail = process.env.AUTH_ADMIN_EMAIL ?? 'thenigerianeconomists@gmail.com'
+
+    await resend.emails.send({
+      from: 'The Nigerian Economist <noreply@updates.thenigerianeconomists.com>',
+      to: editorialEmail,
+      subject: `[Submission] ${headline.trim()}`,
+      html: `
+        <p><strong>From:</strong> ${session.user.name ?? ''} &lt;${session.user.email}&gt;</p>
+        <p><strong>Headline:</strong> ${headline.trim()}</p>
+        <p><strong>Word count:</strong> ${wordCount.toLocaleString()}</p>
+        ${affiliation ? `<p><strong>Affiliation:</strong> ${affiliation}</p>` : ''}
+        ${coiDisclosure ? `<p><strong>COI disclosure:</strong> ${coiDisclosure}</p>` : ''}
+        <p><strong>Submission ID:</strong> ${submission.id}</p>
+        <hr style="border:none;border-top:1px solid #e5e7eb;margin:1.5rem 0"/>
+        <div style="white-space:pre-wrap;font-family:Georgia,serif;line-height:1.75;font-size:15px">${articleBody.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+      `,
+    }).catch((e: unknown) => console.error('[contribute] editor notification failed', e))
+
+    return NextResponse.json({ ok: true })
+  } catch (e) {
+    console.error('[contribute] error:', e)
+    return NextResponse.json({ error: 'Submission failed. Please try again.' }, { status: 500 })
+  }
 }

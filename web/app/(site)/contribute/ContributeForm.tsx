@@ -1,37 +1,49 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 
 interface Props {
   userName: string
   userEmail: string
 }
 
+function countWords(text: string): number {
+  return text.trim().split(/\s+/).filter(Boolean).length
+}
+
 export function ContributeForm({ userName, userEmail }: Props) {
-  const [fields, setFields] = useState({
-    headline: '',
-    abstract: '',
-    wordCount: '',
-    affiliation: '',
-    coiDisclosure: '',
-  })
+  const [headline, setHeadline] = useState('')
+  const [body, setBody] = useState('')
+  const [affiliation, setAffiliation] = useState('')
+  const [coi, setCoi] = useState('')
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
 
-  function set(k: string, v: string) {
-    setFields((f) => ({ ...f, [k]: v }))
-  }
+  const wordCount = countWords(body)
+  const wordCountOk = wordCount >= 800 && wordCount <= 5000
+  const canSubmit = headline.trim().length > 0 && body.trim().length > 0 && wordCountOk
+
+  const wordCountColor =
+    wordCount === 0 ? 'var(--ink-faint, #bbb)'
+    : wordCount < 800 ? '#b45309'
+    : wordCount > 5000 ? '#b91c1c'
+    : '#15803d'
+
+  const handleBodyChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setBody(e.target.value)
+  }, [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    if (!canSubmit) return
     setSubmitting(true)
     setError('')
     try {
       const res = await fetch('/api/contribute', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(fields),
+        body: JSON.stringify({ headline, body, affiliation, coiDisclosure: coi }),
       })
       if (!res.ok) {
         const data = await res.json() as { error?: string }
@@ -48,107 +60,103 @@ export function ContributeForm({ userName, userEmail }: Props) {
 
   if (submitted) {
     return (
-      <div style={{
-        padding: '1.5rem',
-        background: 'var(--bg-2, #f5f0e8)',
-        borderLeft: '3px solid var(--accent)',
-        borderRadius: '2px',
-      }}>
-        <p style={{ fontWeight: 600, marginBottom: '0.4rem' }}>Pitch received — thank you.</p>
-        <p style={{ fontSize: '0.9rem', color: 'var(--ink-2)', lineHeight: 1.6 }}>
+      <div className="contribute-success">
+        <p className="contribute-success-head">Article received — thank you.</p>
+        <p className="contribute-success-body">
           Our editors will review your submission and respond to <strong>{userEmail}</strong> within
-          five business days. If your pitch is accepted, we will invite you to submit the full article
-          through our editorial system.
+          five business days.
         </p>
       </div>
     )
   }
 
-  const can = fields.headline.trim() && fields.abstract.trim() && fields.wordCount.trim()
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" style={{ maxWidth: '560px' }}>
-      <p style={{ fontSize: '0.875rem', color: 'var(--ink-2)', lineHeight: 1.6 }}>
+    <form onSubmit={handleSubmit} className="contribute-form">
+      <p className="contribute-byline">
         Submitting as <strong>{userName || userEmail}</strong>
       </p>
 
-      <div className="admin-form-field">
-        <label className="admin-form-label" htmlFor="headline">Proposed headline *</label>
+      {/* Headline */}
+      <div className="contribute-field">
+        <label className="contribute-label" htmlFor="cf-headline">
+          Proposed headline <span className="contribute-req">*</span>
+        </label>
         <input
-          id="headline"
-          className="ref-field"
-          value={fields.headline}
-          onChange={(e) => set('headline', e.target.value)}
+          id="cf-headline"
+          className="contribute-input"
+          value={headline}
+          onChange={(e) => setHeadline(e.target.value)}
           placeholder="A concise working title for your piece"
           required
+          maxLength={200}
         />
       </div>
 
-      <div className="admin-form-field">
-        <label className="admin-form-label" htmlFor="abstract">Abstract / pitch (200 words max) *</label>
-        <textarea
-          id="abstract"
-          className="ref-field"
-          rows={5}
-          value={fields.abstract}
-          onChange={(e) => set('abstract', e.target.value)}
-          placeholder="Summarise your argument, key evidence, and why it matters for Nigerian economic policy."
-          required
-        />
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-        <div className="admin-form-field">
-          <label className="admin-form-label" htmlFor="wordCount">Estimated word count *</label>
-          <input
-            id="wordCount"
-            className="ref-field"
-            type="number"
-            min={400}
-            max={5000}
-            value={fields.wordCount}
-            onChange={(e) => set('wordCount', e.target.value)}
-            placeholder="1200"
-            required
-          />
+      {/* Article body */}
+      <div className="contribute-field">
+        <div className="contribute-label-row">
+          <label className="contribute-label" htmlFor="cf-body">
+            Article <span className="contribute-req">*</span>
+          </label>
+          <span className="contribute-wordcount" style={{ color: wordCountColor }}>
+            {wordCount === 0 ? '800–5,000 words required' : `${wordCount.toLocaleString()} words`}
+          </span>
         </div>
+        <textarea
+          id="cf-body"
+          className="contribute-body"
+          value={body}
+          onChange={handleBodyChange}
+          placeholder="Type or paste your article here. Include your argument, evidence, and numbered citations in the form [1], [2], etc. Figures can be described in square brackets, e.g. [Figure 1: GDP growth chart]."
+          required
+          rows={24}
+          spellCheck
+        />
+        {wordCount > 0 && !wordCountOk && (
+          <p className="contribute-hint" style={{ color: wordCountColor }}>
+            {wordCount < 800
+              ? `${800 - wordCount} more words needed.`
+              : `${wordCount - 5000} words over the 5,000-word limit.`}
+          </p>
+        )}
+      </div>
 
-        <div className="admin-form-field">
-          <label className="admin-form-label" htmlFor="affiliation">Affiliation / institution</label>
+      {/* Metadata row */}
+      <div className="contribute-row-2">
+        <div className="contribute-field">
+          <label className="contribute-label" htmlFor="cf-affiliation">Affiliation / institution</label>
           <input
-            id="affiliation"
-            className="ref-field"
-            value={fields.affiliation}
-            onChange={(e) => set('affiliation', e.target.value)}
+            id="cf-affiliation"
+            className="contribute-input"
+            value={affiliation}
+            onChange={(e) => setAffiliation(e.target.value)}
             placeholder="University of Lagos, CBN, etc."
           />
         </div>
+
+        <div className="contribute-field">
+          <label className="contribute-label" htmlFor="cf-coi">
+            Conflict of interest{' '}
+            <span className="contribute-hint-inline">(write &ldquo;None&rdquo; if not applicable)</span>
+          </label>
+          <input
+            id="cf-coi"
+            className="contribute-input"
+            value={coi}
+            onChange={(e) => setCoi(e.target.value)}
+            placeholder="e.g. I received a grant from…"
+          />
+        </div>
       </div>
 
-      <div className="admin-form-field">
-        <label className="admin-form-label" htmlFor="coiDisclosure">
-          Conflict of interest disclosure{' '}
-          <span style={{ fontWeight: 400, color: 'var(--ink-3)' }}>(if none, write &ldquo;None&rdquo;)</span>
-        </label>
-        <textarea
-          id="coiDisclosure"
-          className="ref-field"
-          rows={2}
-          value={fields.coiDisclosure}
-          onChange={(e) => set('coiDisclosure', e.target.value)}
-          placeholder="e.g. I received a research grant from…"
-        />
-      </div>
-
-      {error && <p style={{ fontSize: '0.875rem', color: 'var(--error, #b91c1c)' }}>{error}</p>}
+      {error && <p className="contribute-error">{error}</p>}
 
       <button
         type="submit"
-        className="notes-submit"
-        disabled={submitting || !can}
-        style={{ padding: '0.6rem 1.75rem', fontSize: '0.875rem' }}
+        className="contribute-submit"
+        disabled={submitting || !canSubmit}
       >
-        {submitting ? 'Submitting…' : 'Submit pitch'}
+        {submitting ? 'Submitting…' : 'Submit article'}
       </button>
     </form>
   )
