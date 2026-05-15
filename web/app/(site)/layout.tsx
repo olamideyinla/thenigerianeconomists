@@ -1,10 +1,28 @@
 import Link from 'next/link'
+import { db } from '@/lib/db'
 import { SiteHeader } from '@/components/reader/SiteHeader'
 
-export default function SiteLayout({ children }: { children: React.ReactNode }) {
+export const dynamic = 'force-dynamic'
+
+export default async function SiteLayout({ children }: { children: React.ReactNode }) {
+  const topicsRaw = await db.topic.findMany({
+    orderBy: { displayOrder: 'asc' },
+    select: {
+      slug: true,
+      name: true,
+      _count: { select: { articles: { where: { status: 'PUBLISHED' } } } },
+    },
+  })
+
+  const topics = topicsRaw.map((t) => ({
+    slug: t.slug,
+    name: t.name,
+    count: t._count.articles,
+  }))
+
   return (
     <>
-      <SiteHeader />
+      <SiteHeader topics={topics} />
       <main>{children}</main>
       <footer className="site-foot" aria-label="Site footer">
         <div className="sf-wordmark">

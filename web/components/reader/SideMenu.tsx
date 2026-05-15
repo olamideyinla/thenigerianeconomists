@@ -3,27 +3,19 @@
 import { useEffect } from 'react'
 import Link from 'next/link'
 
-const SECTIONS = [
-  { slug: 'fx',          name: 'FX & Monetary Policy',  count: 47 },
-  { slug: 'fiscal',      name: 'Fiscal Policy',         count: 38 },
-  { slug: 'banking',     name: 'Banking & Finance',     count: 31 },
-  { slug: 'behavioural', name: 'Behavioural Economics', count: 31 },
-  { slug: 'political',   name: 'Political Economy',     count: 26 },
-  { slug: 'welfare',     name: 'Welfare Economics',     count: 24 },
-  { slug: 'subsidy',     name: 'Subsidy & Energy',      count: 22 },
-  { slug: 'capital',     name: 'Capital Markets',       count: 21 },
-  { slug: 'labour',      name: 'Labour & Inflation',    count: 19 },
-  { slug: 'subnation',   name: 'Subnational',           count: 18 },
-  { slug: 'trade',       name: 'Trade & AfCFTA',        count: 14 },
-  { slug: 'health',      name: 'Health Economics',      count: 12 },
-]
+interface TopicItem {
+  slug: string
+  name: string
+  count: number
+}
 
 interface SideMenuProps {
+  topics: TopicItem[]
   open: boolean
   onClose: () => void
 }
 
-export function SideMenu({ open, onClose }: SideMenuProps) {
+export function SideMenu({ topics, open, onClose }: SideMenuProps) {
   // Close on Escape key + lock body scroll while open
   useEffect(() => {
     if (!open) return
@@ -63,9 +55,9 @@ export function SideMenu({ open, onClose }: SideMenuProps) {
         </div>
 
         <ul className="drawer-list">
-          {SECTIONS.map(s => (
+          {topics.map(s => (
             <li key={s.slug}>
-              <Link href={`/topic/${s.slug}`} onClick={onClose}>
+              <Link href={`/topics/${s.slug}`} onClick={onClose}>
                 <span className="dl-name">{s.name}</span>
                 <span className="dl-count">{s.count}</span>
               </Link>

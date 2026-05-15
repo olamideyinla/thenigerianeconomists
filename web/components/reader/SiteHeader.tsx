@@ -6,7 +6,17 @@ import { SideMenu } from './SideMenu'
 import { SplashOverlay } from './SplashOverlay'
 import { SearchModal } from './SearchModal'
 
-export function SiteHeader() {
+interface TopicItem {
+  slug: string
+  name: string
+  count: number
+}
+
+interface SiteHeaderProps {
+  topics: TopicItem[]
+}
+
+export function SiteHeader({ topics }: SiteHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
 
@@ -17,7 +27,7 @@ export function SiteHeader() {
         onMenu={() => setMenuOpen(true)}
         onSearch={() => setSearchOpen(true)}
       />
-      <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <SideMenu topics={topics} open={menuOpen} onClose={() => setMenuOpen(false)} />
       <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   )

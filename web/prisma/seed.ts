@@ -107,7 +107,7 @@ async function main() {
   const topicData = [
     { slug: 'fx',          name: 'FX & Monetary Policy',  displayOrder: 1 },
     { slug: 'fiscal',      name: 'Fiscal Policy',          displayOrder: 2 },
-    { slug: 'subnation',   name: 'Subnational',            displayOrder: 3 },
+    { slug: 'subnational', name: 'Subnational',             displayOrder: 3 },
     { slug: 'subsidy',     name: 'Subsidy & Energy',       displayOrder: 4 },
     { slug: 'banking',     name: 'Banking & Finance',      displayOrder: 5 },
     { slug: 'labour',      name: 'Labour & Inflation',     displayOrder: 6 },
@@ -403,7 +403,7 @@ If the FX window is thinner than disclosed turnover suggests, the case for furth
       headline: 'Six States Are Insolvent on Any Reasonable Definition. The FAAC Cushion Is Disappearing.',
       deck: 'The 2025 federation account boom is unwinding. The states that spent it are now exposed.',
       authorId: authorOkoro.id,
-      topicId: topics['subnation'].id,
+      topicId: topics['subnational'].id,
       status: ArticleStatus.PUBLISHED,
       publishedAt: new Date('2026-04-20T08:00:00Z'),
       wordCount: 2200,
