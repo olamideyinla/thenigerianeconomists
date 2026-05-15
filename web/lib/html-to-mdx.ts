@@ -98,7 +98,7 @@ export function htmlToMdx(html: string): string {
 
   // 3. Unordered lists
   s = s.replace(/<ul[^>]*>([\s\S]*?)<\/ul>/gi, (_, inner) =>
-    '\n' + inner.replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, (__, li) => `- ${innerText(li)}\n`) + '\n'
+    '\n' + inner.replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, (_: string, li: string) => `- ${innerText(li)}\n`) + '\n'
   )
 
   // 4. Block elements
