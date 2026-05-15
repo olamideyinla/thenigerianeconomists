@@ -246,3 +246,229 @@
   padding-top: 12px;
   border-top: 0.5px solid var(--rule);
 }
+
+/* ═════════════════════════════════════════════════════════════════
+   Search modal overlay
+   ═════════════════════════════════════════════════════════════════ */
+
+.search-modal {
+  position: fixed; inset: 0; z-index: 60;
+  pointer-events: none;
+}
+.search-modal.open { pointer-events: auto; }
+
+.search-modal-scrim {
+  position: absolute; inset: 0;
+  background: rgba(10, 8, 5, 0.55);
+  backdrop-filter: blur(2px);
+  opacity: 0; transition: opacity 0.2s ease;
+}
+.search-modal.open .search-modal-scrim { opacity: 1; }
+
+.search-modal-panel {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  max-height: 80dvh;
+  background: var(--bg);
+  border-bottom: 0.5px solid var(--rule);
+  box-shadow: 0 8px 40px rgba(10,8,5,0.18);
+  transform: translateY(-100%);
+  transition: transform 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.search-modal.open .search-modal-panel { transform: translateY(0); }
+
+/* Input row */
+.search-input-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 18px;
+  border-bottom: 0.5px solid var(--rule);
+  flex-shrink: 0;
+}
+.search-icon { color: var(--ink-faint); flex-shrink: 0; }
+.search-input {
+  flex: 1;
+  appearance: none; border: 0; background: transparent;
+  font-family: var(--font-body); font-size: 17px; line-height: 1.4;
+  color: var(--ink); outline: none;
+}
+.search-input::placeholder { color: var(--ink-faint); }
+/* hide browser native clear button in WebKit */
+.search-input::-webkit-search-cancel-button { display: none; }
+.search-dismiss-btn {
+  appearance: none; border: 0; background: transparent;
+  display: grid; place-items: center;
+  width: 28px; height: 28px;
+  color: var(--ink-soft); cursor: pointer;
+  flex-shrink: 0;
+}
+.search-esc-label {
+  font-family: var(--font-meta); font-size: 10px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--ink-faint);
+  border: 0.5px solid var(--rule);
+  padding: 2px 5px; border-radius: 3px;
+}
+
+/* Results area */
+.search-modal-results {
+  overflow-y: auto;
+  flex: 1;
+}
+.search-status,
+.search-empty {
+  padding: 24px 20px;
+  font-family: var(--font-body); font-style: italic; font-size: 15px;
+  color: var(--ink-soft); margin: 0;
+}
+.search-hit-list {
+  list-style: none; padding: 6px 0; margin: 0;
+}
+.search-hit {
+  display: block; padding: 11px 18px;
+  text-decoration: none; color: inherit;
+  border-bottom: 0.5px solid var(--rule);
+}
+.search-hit:hover { background: var(--accent-veil); }
+.sh-kicker {
+  display: block;
+  font-family: var(--font-meta); font-size: 10px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 3px;
+}
+.sh-headline {
+  display: block;
+  font-family: var(--font-display); font-size: 15px; font-weight: 500;
+  line-height: 1.25; color: var(--ink);
+  font-variation-settings: "opsz" 36, "SOFT" 30;
+  margin-bottom: 3px;
+}
+.sh-deck {
+  display: block;
+  font-family: var(--font-body); font-size: 13px; font-style: italic;
+  color: var(--ink-soft); line-height: 1.4;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.sh-meta {
+  display: block;
+  font-family: var(--font-meta); font-size: 10.5px; color: var(--ink-faint);
+  margin-top: 4px;
+}
+/* MeiliSearch highlight marks */
+.sh-headline mark, .sh-deck mark {
+  background: transparent; color: var(--accent); font-style: normal;
+}
+.search-see-all {
+  display: block; padding: 12px 18px;
+  font-family: var(--font-meta); font-size: 11px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent); text-decoration: none;
+  text-align: center;
+  border-top: 0.5px solid var(--rule);
+}
+.search-see-all:hover { background: var(--accent-veil); }
+
+/* ═════════════════════════════════════════════════════════════════
+   Search page (/search)
+   ═════════════════════════════════════════════════════════════════ */
+
+.sp-page {
+  --gutter: 22px;
+  padding-top: 28px;
+  padding-bottom: 60px;
+}
+
+/* Input */
+.sp-input-wrap {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0 10px;
+  border-bottom: 1px solid var(--ink);
+  margin-bottom: 20px;
+}
+.sp-search-icon { color: var(--ink-faint); flex-shrink: 0; }
+.sp-input {
+  flex: 1;
+  appearance: none; border: 0; background: transparent;
+  font-family: var(--font-display); font-size: 24px; font-weight: 400;
+  font-variation-settings: "opsz" 36, "SOFT" 20;
+  color: var(--ink); outline: none;
+  letter-spacing: -0.01em;
+}
+.sp-input::placeholder { color: var(--ink-faint); font-style: italic; }
+.sp-input::-webkit-search-cancel-button { display: none; }
+
+/* Topic filter chips */
+.sp-filters {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-bottom: 20px;
+}
+.sp-chip {
+  appearance: none; border: 0.5px solid var(--rule); background: transparent;
+  font-family: var(--font-meta); font-size: 10.5px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--ink-soft); cursor: pointer;
+  padding: 5px 10px; border-radius: 2px;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.sp-chip:hover { border-color: var(--accent); color: var(--accent); }
+.sp-chip.active {
+  background: var(--accent); border-color: var(--accent);
+  color: var(--bg);
+}
+
+/* Result count */
+.sp-count {
+  font-family: var(--font-meta); font-size: 11px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--ink-faint); margin: 0 0 20px;
+}
+
+/* Results list */
+.sp-results {
+  list-style: none; padding: 0; margin: 0;
+}
+.sp-result-item { border-top: 0.5px solid var(--rule); }
+.sp-result-item:last-child { border-bottom: 0.5px solid var(--rule); }
+.sp-result {
+  display: block; padding: 18px 0;
+  text-decoration: none; color: inherit;
+}
+.sp-result:hover .sp-headline { color: var(--accent); }
+.sp-kicker {
+  display: block;
+  font-family: var(--font-meta); font-size: 10px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 5px;
+}
+.sp-headline {
+  font-family: var(--font-display); font-size: 22px; font-weight: 500;
+  line-height: 1.15; letter-spacing: -0.015em;
+  color: var(--ink); margin: 0 0 6px;
+  font-variation-settings: "opsz" 36, "SOFT" 30;
+  transition: color 0.15s;
+}
+.sp-deck {
+  font-family: var(--font-body); font-size: 15px; font-style: italic;
+  color: var(--ink-soft); line-height: 1.45; margin: 0 0 6px;
+}
+.sp-snippet {
+  font-family: var(--font-body); font-size: 13px;
+  color: var(--ink-faint); line-height: 1.5; margin: 0 0 6px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.sp-meta {
+  font-family: var(--font-meta); font-size: 11px; color: var(--ink-faint);
+}
+/* MeiliSearch highlight marks */
+.sp-headline mark, .sp-deck mark, .sp-snippet mark {
+  background: transparent; color: var(--accent); font-style: normal;
+}
+
+/* Empty / prompt states */
+.sp-prompt {
+  font-family: var(--font-body); font-style: italic; font-size: 16px;
+  color: var(--ink-soft); margin: 40px 0; text-align: center;
+}

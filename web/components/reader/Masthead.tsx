@@ -4,9 +4,10 @@ import Link from 'next/link'
 
 interface MastheadProps {
   onMenu: () => void
+  onSearch: () => void
 }
 
-export function Masthead({ onMenu }: MastheadProps) {
+export function Masthead({ onMenu, onSearch }: MastheadProps) {
   return (
     <header className="masthead">
       <button
@@ -26,12 +27,18 @@ export function Masthead({ onMenu }: MastheadProps) {
         <span className="m-ne">Nigerian Economists</span>
       </Link>
 
-      <Link href="/search" className="m-btn" aria-label="Search">
+      <button
+        className="m-btn"
+        type="button"
+        onClick={onSearch}
+        aria-label="Search"
+        aria-haspopup="dialog"
+      >
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
           <circle cx="7" cy="7" r="5.2" stroke="currentColor" strokeWidth="1.2" />
           <path d="M11 11l3.2 3.2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
         </svg>
-      </Link>
+      </button>
     </header>
   )
 }

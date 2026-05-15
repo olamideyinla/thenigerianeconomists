@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { writeAuditLog } from '@/lib/audit'
+import { indexArticle, removeFromIndex, mdxToSearchText } from '@/lib/search'
 
 // ── Auth guard ────────────────────────────────────────────────────
 
@@ -98,15 +99,33 @@ export async function publishArticle(id: string): Promise<{ errors?: string[] }>
 
   const user = await requireEditor()
 
-  await db.article.update({
+  const publishedAt = new Date()
+  const article = await db.article.update({
     where: { id },
-    data: { status: 'PUBLISHED', publishedAt: new Date() },
+    data: { status: 'PUBLISHED', publishedAt },
+    include: { author: true, topic: true },
   })
 
   await writeAuditLog(user.id!, 'article.publish', 'Article', id)
 
+  // Index in MeiliSearch (non-blocking — never fails the publish)
+  await indexArticle({
+    id: article.id,
+    slug: article.slug,
+    headline: article.headline,
+    deck: article.deck ?? '',
+    kicker: article.kicker ?? '',
+    contentText: mdxToSearchText(article.contentMdx ?? ''),
+    authorName: article.author.name,
+    topicSlug: article.topic.slug,
+    topicName: article.topic.name,
+    publishedAt: publishedAt.getTime(),
+    readMinutes: article.readMinutes,
+  })
+
   revalidatePath(`/admin/articles`)
   revalidatePath(`/admin/articles/${id}`)
+  revalidatePath(`/articles/${article.slug}`)
   return {}
 }
 
