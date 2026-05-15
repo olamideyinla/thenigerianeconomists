@@ -3,6 +3,8 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
+
+export const dynamic = 'force-dynamic'
 import { compileMdx } from '@/lib/mdx'
 import { formatDate } from '@/lib/format'
 import { Byline } from '@/components/reader/Byline'
