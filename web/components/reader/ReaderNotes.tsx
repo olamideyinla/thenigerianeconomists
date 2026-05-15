@@ -1,142 +1,208 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import { formatDate } from '@/lib/format'
 
-interface Note {
+interface NoteItem {
   id: string
-  name: string
-  text: string
-  date: string
-  endorsements: number
+  body: string
+  createdAt: string
+  userId: string
+  userName: string
 }
 
 interface ReaderNotesProps {
+  initialNotes: NoteItem[]
+  totalCount: number
   articleSlug: string
-  initialNotes?: Note[]
+  isAuthenticated: boolean
+  currentUserId?: string
 }
 
-const MAX_CHARS = 500
+export function ReaderNotes({
+  initialNotes,
+  totalCount,
+  articleSlug,
+  isAuthenticated,
+  currentUserId,
+}: ReaderNotesProps) {
+  const [notes, setNotes] = useState(initialNotes)
+  const [total, setTotal] = useState(totalCount)
+  const [composing, setComposing] = useState(false)
+  const [body, setBody] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-export function ReaderNotes({ articleSlug: _articleSlug, initialNotes = [] }: ReaderNotesProps) {
-  const [composerOpen, setComposerOpen] = useState(false)
-  const [notes, setNotes] = useState<Note[]>(initialNotes)
-  const [name, setName] = useState('')
-  const [text, setText] = useState('')
+  const remaining = 600 - body.length
 
-  const remaining = MAX_CHARS - text.length
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!text.trim() || !name.trim()) return
-    setNotes(prev => [
-      {
-        id: Date.now().toString(),
-        name: name.trim(),
-        text: text.trim(),
-        date: 'Just now',
-        endorsements: 0,
-      },
-      ...prev,
-    ])
-    setText('')
-    setName('')
-    setComposerOpen(false)
+  function openComposer() {
+    setComposing(true)
+    setTimeout(() => textareaRef.current?.focus(), 50)
   }
 
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!body.trim() || submitting) return
+    setSubmitting(true)
+    try {
+      const res = await fetch(`/api/articles/${articleSlug}/notes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ body }),
+      })
+      if (res.ok) {
+        setSubmitted(true)
+        setComposing(false)
+        setBody('')
+      }
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  async function handleLoadMore() {
+    setLoadingMore(true)
+    try {
+      const res = await fetch(
+        `/api/articles/${articleSlug}/notes?offset=${notes.length}&limit=10`
+      )
+      if (res.ok) {
+        const data = await res.json() as { notes: NoteItem[]; total: number }
+        setNotes((prev) => [...prev, ...data.notes])
+        setTotal(data.total)
+      }
+    } finally {
+      setLoadingMore(false)
+    }
+  }
+
+  const callbackUrl =
+    typeof window !== 'undefined' ? encodeURIComponent(window.location.href) : ''
+
   return (
-    <section className="notes" aria-label="Reader notes">
+    <section className="notes">
       <header className="notes-head">
-        <span className="kicker">Reader Notes</span>
-        <span className="notes-count">{notes.length} notes</span>
+        <h2 className="home-section-title">Reader notes</h2>
+        {total > 0 && <span className="notes-count">{total} approved</span>}
       </header>
 
       <p className="notes-policy">
-        Notes are brief, good-faith responses from readers. They are not moderated
-        in real time &#8212; see our{' '}
-        <button className="notes-policy-link" type="button">notes policy</button>.
+        Notes are moderated and published at editors&#8217; discretion. By submitting
+        you agree to our{' '}
+        <button type="button" className="notes-policy-link">
+          community guidelines
+        </button>
+        .
       </p>
 
-      {!composerOpen ? (
-        <button
-          className="notes-open"
-          type="button"
-          onClick={() => setComposerOpen(true)}
-        >
-          <span className="notes-open-plus" aria-hidden="true">+</span>
-          Add a note
-        </button>
-      ) : (
+      {/* Submission confirmation */}
+      {submitted && (
+        <p className="notes-policy" style={{ borderLeftColor: 'var(--accent)' }}>
+          Your note has been submitted and is pending editorial review. Thank you.
+        </p>
+      )}
+
+      {/* Composer trigger */}
+      {!composing && !submitted && (
+        isAuthenticated ? (
+          <button type="button" className="notes-open" onClick={openComposer}>
+            <span className="notes-open-plus">+</span>
+            Add a note
+          </button>
+        ) : (
+          <a
+            href={`/signin?callbackUrl=${callbackUrl}`}
+            className="notes-open"
+            style={{ textDecoration: 'none' }}
+          >
+            <span className="notes-open-plus">+</span>
+            Sign in to add a note
+          </a>
+        )
+      )}
+
+      {/* Composer form */}
+      {composing && (
         <form className="notes-form" onSubmit={handleSubmit}>
-          <input
-            className="notes-name"
-            placeholder="Your name"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            maxLength={60}
-            aria-label="Your name"
-            autoFocus
-          />
           <textarea
+            ref={textareaRef}
             className="notes-textarea"
-            placeholder="Write a brief, good-faith response&#8230;"
-            value={text}
-            onChange={e => setText(e.target.value)}
+            placeholder="Write a note about this article…"
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
             rows={4}
-            maxLength={MAX_CHARS}
-            aria-label="Your note"
+            maxLength={600}
           />
           <div className="notes-form-foot">
-            <span className={`notes-counter${remaining < 60 ? ' low' : ''}`}>
-              {remaining} left
+            <span className={`notes-counter${remaining < 80 ? ' low' : ''}`}>
+              {remaining} remaining
             </span>
             <button
               type="button"
               className="notes-cancel"
-              onClick={() => setComposerOpen(false)}
+              onClick={() => { setComposing(false); setBody('') }}
             >
               Cancel
             </button>
             <button
               type="submit"
               className="notes-submit"
-              disabled={!text.trim() || !name.trim()}
+              disabled={submitting || !body.trim()}
             >
-              Publish
+              {submitting ? 'Submitting…' : 'Submit'}
             </button>
           </div>
         </form>
       )}
 
+      {/* Approved notes list */}
       {notes.length > 0 && (
         <ul className="notes-list">
-          {notes.map(note => (
-            <li key={note.id} className="note">
-              <div className="note-head">
-                <span className="note-initial" aria-hidden="true">
-                  {note.name[0].toUpperCase()}
-                </span>
-                <div>
-                  <div className="note-name">{note.name}</div>
-                  <div className="note-sub">{note.date}</div>
+          {notes.map((note) => {
+            const isMine = note.userId === currentUserId
+            const initial = (note.userName.charAt(0) || 'R').toUpperCase()
+            return (
+              <li key={note.id} className={`note${isMine ? ' mine' : ''}`}>
+                <div className="note-head">
+                  <span className="note-initial">{initial}</span>
+                  <div>
+                    <div className="note-name">
+                      {note.userName}
+                      {isMine && <span className="note-mine"> · You</span>}
+                    </div>
+                    <div className="note-sub">{formatDate(note.createdAt)}</div>
+                  </div>
                 </div>
-                <button
-                  className="note-endorse"
-                  type="button"
-                  aria-label={`Endorse note by ${note.name}`}
-                >
-                  &#9825; {note.endorsements}
-                </button>
-              </div>
-              <p className="note-body">{note.text}</p>
-            </li>
-          ))}
+                <p className="note-body">{note.body}</p>
+              </li>
+            )
+          })}
         </ul>
       )}
 
-      <p className="notes-fine">
-        Notes are subject to our community standards. We reserve the right to remove
-        notes that violate these standards without notice.
-      </p>
+      {/* Load more */}
+      {notes.length < total && (
+        <button
+          type="button"
+          className="notes-more"
+          onClick={handleLoadMore}
+          disabled={loadingMore}
+        >
+          {loadingMore
+            ? 'Loading…'
+            : `Load ${total - notes.length} more note${total - notes.length !== 1 ? 's' : ''}`}
+        </button>
+      )}
+
+      {notes.length === 0 && !composing && !submitted && (
+        <p className="notes-fine">
+          {isAuthenticated
+            ? 'No notes yet. Be the first to add one.'
+            : 'No notes yet. Sign in to be the first.'}
+        </p>
+      )}
     </section>
   )
 }

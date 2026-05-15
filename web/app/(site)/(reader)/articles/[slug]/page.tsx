@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { compileMdx } from '@/lib/mdx'
 import { formatDate } from '@/lib/format'
@@ -8,6 +9,8 @@ import { Byline } from '@/components/reader/Byline'
 import { COIDisclosure } from '@/components/reader/COIDisclosure'
 import { ReferencesList } from '@/components/reader/ReferencesList'
 import { LikeBar } from '@/components/reader/LikeBar'
+import { ReaderNotes } from '@/components/reader/ReaderNotes'
+import { ReadingProgress } from '@/components/reader/ReadingProgress'
 import { RebuttalIndicator } from '@/components/reader/RebuttalIndicator'
 import { RebuttalThread } from '@/components/reader/RebuttalThread'
 import { ArticleClientShell } from './ArticleClientShell'
@@ -76,11 +79,42 @@ export default async function ArticlePage({ params }: PageProps) {
 
   if (!article) notFound()
 
-  // ── Endorsement count ────────────────────────────────────────────
+  // ── Session ───────────────────────────────────────────────────────
 
-  const endorsementCount = await db.endorsement.count({
-    where: { articleId: article.id },
-  })
+  const session = await auth()
+  const userId = session?.user?.id
+
+  // ── Endorsement count + current-user status ───────────────────────
+
+  const [endorsementCount, userEndorsement] = await Promise.all([
+    db.endorsement.count({ where: { articleId: article.id } }),
+    userId
+      ? db.endorsement.findUnique({
+          where: { articleId_userId: { articleId: article.id, userId } },
+          select: { id: true },
+        })
+      : Promise.resolve(null),
+  ])
+
+  // ── Approved reader notes (first 10) ─────────────────────────────
+
+  const [approvedNotes, notesTotal] = await Promise.all([
+    db.readerNote.findMany({
+      where: { articleId: article.id, status: 'APPROVED' },
+      include: { user: { select: { id: true, name: true, email: true } } },
+      orderBy: { createdAt: 'desc' },
+      take: 10,
+    }),
+    db.readerNote.count({ where: { articleId: article.id, status: 'APPROVED' } }),
+  ])
+
+  const initialNotes = approvedNotes.map((n) => ({
+    id: n.id,
+    body: n.body,
+    createdAt: n.createdAt.toISOString(),
+    userId: n.userId,
+    userName: n.user.name ?? n.user.email?.split('@')[0] ?? 'Reader',
+  }))
 
   // ── Related articles (same topic, different slug, published) ─────
 
@@ -145,10 +179,7 @@ export default async function ArticlePage({ params }: PageProps) {
 
   return (
     <div className="page page-article">
-      {/* Reading progress bar (CSS-driven via scroll-driven animations) */}
-      <div className="reading-progress" aria-hidden="true">
-        <span />
-      </div>
+      <ReadingProgress />
 
       <ArticleClientShell refs={refs} figures={figures}>
         {/* article-main is the primary column; CitationRail is the second column */}
@@ -212,8 +243,14 @@ export default async function ArticlePage({ params }: PageProps) {
             )}
           </header>
 
-          {/* ── Like bar ──────────────────────────────────────── */}
-          <LikeBar articleSlug={article.slug} initialCount={endorsementCount} />
+          {/* ── Like bar + share buttons ───────────────────────── */}
+          <LikeBar
+            articleSlug={article.slug}
+            articleTitle={article.headline}
+            initialCount={endorsementCount}
+            initialLiked={!!userEndorsement}
+            isAuthenticated={!!userId}
+          />
 
           {/* ── MDX body ──────────────────────────────────────── */}
           <div className="article-body">{content}</div>
@@ -231,6 +268,17 @@ export default async function ArticlePage({ params }: PageProps) {
               responses={responses}
             />
           )}
+
+          {responses.length > 0 && <hr className="rule rule-thick" />}
+
+          {/* ── Reader notes ──────────────────────────────────── */}
+          <ReaderNotes
+            initialNotes={initialNotes}
+            totalCount={notesTotal}
+            articleSlug={article.slug}
+            isAuthenticated={!!userId}
+            currentUserId={userId}
+          />
 
           <hr className="rule rule-thick" />
 
