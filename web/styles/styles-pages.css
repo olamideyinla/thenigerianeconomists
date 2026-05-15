@@ -863,6 +863,10 @@
   font-weight: 500;
   text-decoration: none;
   transition: background 0.15s;
+  /* button element resets */
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
 }
 
 .verify-btn:hover { background: var(--accent, #b45309); }
