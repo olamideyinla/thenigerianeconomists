@@ -32,13 +32,17 @@ export async function GET(req: NextRequest) {
   })
 
   // Fire and forget — don't block the redirect on email send
-  const unsubscribeUrl = buildUnsubscribeUrl(subscription.email)
-  sendEmail({
-    to: subscription.email,
-    subject: 'Welcome to The Nigerian Economists',
-    react: WelcomeEmail({ email: subscription.email, unsubscribeUrl }),
-    emailType: 'welcome',
-  }).catch((e) => console.error('[newsletter/confirm] welcome email failed', e))
+  try {
+    const unsubscribeUrl = buildUnsubscribeUrl(subscription.email)
+    sendEmail({
+      to: subscription.email,
+      subject: 'Welcome to The Nigerian Economists',
+      react: WelcomeEmail({ email: subscription.email, unsubscribeUrl }),
+      emailType: 'welcome',
+    }).catch((e) => console.error('[newsletter/confirm] welcome email failed', e))
+  } catch (e) {
+    console.error('[newsletter/confirm] welcome email setup failed', e)
+  }
 
   return NextResponse.redirect(new URL('/newsletter/confirmed', req.url))
 }
