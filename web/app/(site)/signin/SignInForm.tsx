@@ -13,6 +13,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   OAuthCreateAccount: 'Could not create an account. Contact support.',
   EmailCreateAccount: 'Could not create an account. Contact support.',
   Callback: 'Error during callback. Please try again.',
+  Verification: 'This sign-in link has expired or already been used. Please request a new one.',
   default: 'Sign-in failed. Please try again.',
 }
 
