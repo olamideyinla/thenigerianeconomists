@@ -1027,6 +1027,63 @@
   font-size: 0.875rem;
 }
 
+/* ── Rich editor toolbar ───────────────────────────────────────── */
+.re-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--rule, #ddd);
+  background: #fafaf8;
+  border-radius: 3px 3px 0 0;
+}
+
+.re-tb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 28px;
+  padding: 0 7px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  background: none;
+  font-family: var(--font-meta, ui-sans-serif, sans-serif);
+  font-size: 0.8125rem;
+  color: var(--ink-soft, #555);
+  cursor: pointer;
+  line-height: 1;
+  transition: background 0.1s, border-color 0.1s, color 0.1s;
+}
+
+.re-tb-btn:hover {
+  background: #efefeb;
+  border-color: var(--rule, #ccc);
+  color: var(--ink, #111);
+}
+
+.re-tb-btn--active {
+  background: var(--accent, #b45309);
+  border-color: var(--accent, #b45309);
+  color: #fff;
+}
+
+.re-tb-btn--active:hover {
+  background: #9a3e08;
+  border-color: #9a3e08;
+  color: #fff;
+}
+
+.re-tb-divider {
+  display: inline-block;
+  width: 1px;
+  height: 20px;
+  background: var(--rule, #ddd);
+  margin: 0 4px;
+  align-self: center;
+}
+
 .contribute-rich-wrap {
   border: 1px solid var(--rule, #ccc);
   border-radius: 3px;
