@@ -65,8 +65,9 @@ export async function POST(req: Request, { params }: Params) {
   if (!text) {
     return NextResponse.json({ error: 'Note body required' }, { status: 400 })
   }
-  if (text.length > 600) {
-    return NextResponse.json({ error: 'Note exceeds 600 characters' }, { status: 400 })
+  const wordCount = text.split(/\s+/).length
+  if (wordCount > 100) {
+    return NextResponse.json({ error: 'Note exceeds 100 words' }, { status: 400 })
   }
 
   const note = await db.readerNote.create({

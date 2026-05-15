@@ -35,7 +35,8 @@ export function ReaderNotes({
   const [loadingMore, setLoadingMore] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  const remaining = 600 - body.length
+  const wordCount = body.trim() === '' ? 0 : body.trim().split(/\s+/).length
+  const remaining = 100 - wordCount
 
   function openComposer() {
     setComposing(true)
@@ -133,11 +134,11 @@ export function ReaderNotes({
             value={body}
             onChange={(e) => setBody(e.target.value)}
             rows={4}
-            maxLength={600}
+            maxLength={800}
           />
           <div className="notes-form-foot">
-            <span className={`notes-counter${remaining < 80 ? ' low' : ''}`}>
-              {remaining} remaining
+            <span className={`notes-counter${remaining < 20 ? ' low' : ''}${remaining < 0 ? ' over' : ''}`}>
+              {remaining < 0 ? `${Math.abs(remaining)} words over limit` : `${remaining} words remaining`}
             </span>
             <button
               type="button"
@@ -149,7 +150,7 @@ export function ReaderNotes({
             <button
               type="submit"
               className="notes-submit"
-              disabled={submitting || !body.trim()}
+              disabled={submitting || !body.trim() || remaining < 0}
             >
               {submitting ? 'Submitting…' : 'Submit'}
             </button>

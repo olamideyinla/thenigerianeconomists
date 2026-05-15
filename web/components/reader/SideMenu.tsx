@@ -79,6 +79,7 @@ export function SideMenu({ open, onClose }: SideMenuProps) {
           <li><Link href="/synthesis" onClick={onClose}>The Synthesis — weekly</Link></li>
           <li><Link href="/rebuttals" onClick={onClose}>Rebuttal index</Link></li>
           <li><Link href="/newsletter" onClick={onClose}>Newsletter</Link></li>
+          <li><Link href="/contribute" onClick={onClose} className="drawer-cta">Submit your article &#8594;</Link></li>
           <li><Link href="/about" onClick={onClose}>About the publication</Link></li>
           <li><Link href="/funders" onClick={onClose}>Funders &amp; transparency</Link></li>
           <li><Link href="/corrections" onClick={onClose}>Corrections log</Link></li>

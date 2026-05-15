@@ -268,6 +268,13 @@ body {
   flex-shrink: 0;
 }
 .drawer-tag { font-family: var(--font-meta); font-size: 10px; color: var(--ink-faint); }
+.drawer-list.secondary a.drawer-cta {
+  color: var(--accent);
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.drawer-list.secondary a.drawer-cta:hover { background: var(--accent-veil); }
 
 /* ───────────────────────────────────────────────────────────────────
    HOMEPAGE
