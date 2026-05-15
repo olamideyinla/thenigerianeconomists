@@ -61,6 +61,15 @@ export async function POST(req: NextRequest) {
       },
     })
 
+    // Upgrade the submitter's role to CONTRIBUTOR if they are still a plain READER.
+    // Editors and Admins keep their existing role.
+    if (session.user.id) {
+      await db.user.updateMany({
+        where: { id: session.user.id, role: 'READER' },
+        data: { role: 'CONTRIBUTOR' },
+      })
+    }
+
     const resend = getResend()
     const editorialEmail = process.env.AUTH_ADMIN_EMAIL ?? 'thenigerianeconomists@gmail.com'
 
