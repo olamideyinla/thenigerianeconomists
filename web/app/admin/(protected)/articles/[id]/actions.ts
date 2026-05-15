@@ -6,6 +6,7 @@ import { db } from '@/lib/db'
 import { writeAuditLog } from '@/lib/audit'
 import { indexArticle, removeFromIndex, mdxToSearchText } from '@/lib/search'
 import { getResend } from '@/lib/email'
+import { htmlToMdx } from '@/lib/html-to-mdx'
 
 // ── Auth guard ────────────────────────────────────────────────────
 
@@ -204,6 +205,24 @@ async function sendRebuttalNotifications(
       await resend.batch.send(messages.slice(i, i + CHUNK))
     }
   }
+}
+
+// ── Fix HTML remnants in MDX ──────────────────────────────────────
+
+/**
+ * Re-runs the HTML→MDX converter on an article's contentMdx.
+ * Use this to repair articles whose content still contains raw HTML
+ * from a Tiptap submission (causing MDX compile/preview errors).
+ */
+export async function fixArticleMdx(id: string): Promise<{ contentMdx: string }> {
+  await requireEditor()
+  const article = await db.article.findUnique({ where: { id }, select: { contentMdx: true } })
+  if (!article) throw new Error('Article not found')
+
+  const fixed = htmlToMdx(article.contentMdx ?? '')
+  await db.article.update({ where: { id }, data: { contentMdx: fixed } })
+  revalidatePath(`/admin/articles/${id}`)
+  return { contentMdx: fixed }
 }
 
 // ── References ────────────────────────────────────────────────────

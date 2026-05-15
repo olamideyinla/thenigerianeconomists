@@ -11,6 +11,7 @@ import {
   saveArticleDraft,
   publishArticle,
   validateArticle,
+  fixArticleMdx,
 } from '@/app/admin/(protected)/articles/[id]/actions'
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false })
@@ -114,6 +115,22 @@ export function ArticleEditor({ article, authors, topics }: ArticleEditorProps) 
     setShowValidation(true)
   }
 
+  async function handleFixHtml() {
+    setSaving(true)
+    setSaveMsg('')
+    try {
+      const { contentMdx: fixed } = await fixArticleMdx(article.id)
+      setContentMdx(fixed)
+      // Push the fixed content into Monaco without losing cursor
+      editorRef.current?.setValue(fixed)
+      setPreviewKey((k) => k + 1)
+      setSaveMsg('HTML fixed')
+    } finally {
+      setSaving(false)
+      setTimeout(() => setSaveMsg(''), 3000)
+    }
+  }
+
   function insertAtCursor(text: string) {
     const ed = editorRef.current
     if (!ed) return
@@ -152,6 +169,9 @@ export function ArticleEditor({ article, authors, topics }: ArticleEditorProps) 
             {article.headline ?? 'Untitled article'}
           </span>
           {saveMsg && <span className="text-xs text-green-600 font-medium">{saveMsg}</span>}
+          <Button size="sm" variant="outline" onClick={handleFixHtml} disabled={saving} title="Convert any raw HTML in the content to clean MDX (fixes preview errors)">
+            Fix HTML
+          </Button>
           <Button size="sm" variant="outline" onClick={handleValidate}>
             Validate
           </Button>
