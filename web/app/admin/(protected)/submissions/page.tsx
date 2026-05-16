@@ -22,7 +22,7 @@ export default async function AdminSubmissionsPage() {
   const submissions = await db.submission.findMany({
     orderBy: { createdAt: 'desc' },
     take: 100,
-  }).catch(() => [])
+  })
 
   const pending = submissions.filter((s) => s.status === 'PENDING').length
 

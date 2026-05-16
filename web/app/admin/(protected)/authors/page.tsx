@@ -11,13 +11,13 @@ export default async function AdminAuthorsPage() {
     db.author.findMany({
       orderBy: { name: 'asc' },
       include: { _count: { select: { articles: true } } },
-    }).catch(() => []),
+    }),
     // Users who submitted articles (CONTRIBUTOR role) — show alongside authors
     db.user.findMany({
       where: { role: 'CONTRIBUTOR' },
       orderBy: { createdAt: 'desc' },
       include: { _count: { select: { submissions: true } } },
-    }).catch(() => []),
+    }),
   ])
 
   // Author slugs that already exist — to detect unlinked contributors

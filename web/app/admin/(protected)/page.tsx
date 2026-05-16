@@ -27,12 +27,12 @@ export default async function AdminDashboard() {
       orderBy: { publishedAt: 'desc' },
       take: 5,
       include: { author: true, topic: true },
-    }).catch(() => []),
+    }),
     db.submission.findMany({
       where: { status: 'PENDING' },
       orderBy: { createdAt: 'desc' },
       take: 5,
-    }).catch(() => []),
+    }),
   ])
 
   return (
