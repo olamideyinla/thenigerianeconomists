@@ -1,15 +1,32 @@
-import { db } from '@/lib/db'
+'use client'
+
+import { useEffect, useState } from 'react'
 import { TopicForm } from './TopicForm'
 
-export const dynamic = 'force-dynamic'
+interface Topic {
+  id: string
+  name: string
+  slug: string
+  description: string | null
+  displayOrder: number
+  _count: { articles: number }
+}
 
-export const metadata = { title: 'Topics' }
+export default function AdminTopicsPage() {
+  const [topics, setTopics] = useState<Topic[]>([])
+  const [editing, setEditing] = useState<Topic | null>(null)
 
-export default async function AdminTopicsPage() {
-  const topics = await db.topic.findMany({
-    orderBy: { displayOrder: 'asc' },
-    include: { _count: { select: { articles: true } } },
-  })
+  async function load() {
+    const res = await fetch('/api/admin/topics')
+    if (res.ok) setTopics(await res.json())
+  }
+
+  useEffect(() => { load() }, [])
+
+  function handleSaved() {
+    setEditing(null)
+    load()
+  }
 
   return (
     <div className="admin-page">
@@ -30,7 +47,11 @@ export default async function AdminTopicsPage() {
             </thead>
             <tbody>
               {topics.map((t) => (
-                <tr key={t.id}>
+                <tr
+                  key={t.id}
+                  onClick={() => setEditing(t)}
+                  style={{ cursor: 'pointer', background: editing?.id === t.id ? 'var(--accent-veil)' : undefined }}
+                >
                   <td className="text-gray-400 text-sm">{t.displayOrder}</td>
                   <td className="font-medium">{t.name}</td>
                   <td className="text-xs font-mono text-gray-500">{t.slug}</td>
@@ -42,13 +63,21 @@ export default async function AdminTopicsPage() {
           {topics.length === 0 && (
             <div className="text-center py-12 text-sm text-gray-400">No topics yet.</div>
           )}
+          {topics.length > 0 && (
+            <p className="text-xs text-gray-400" style={{ marginTop: 8 }}>Click a row to edit it.</p>
+          )}
         </div>
 
         <div className="admin-card">
           <h2 style={{ fontFamily: 'var(--font-fraunces)', fontSize: 16, fontWeight: 600, marginBottom: 12 }}>
-            Add topic
+            {editing ? `Edit: ${editing.name}` : 'Add topic'}
           </h2>
-          <TopicForm />
+          <TopicForm
+            key={editing?.id ?? 'new'}
+            editing={editing}
+            onCancel={() => setEditing(null)}
+            onSaved={handleSaved}
+          />
         </div>
       </div>
     </div>

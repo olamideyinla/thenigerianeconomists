@@ -4,6 +4,50 @@ import { db } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
 
+// ── Intro extraction ──────────────────────────────────────────────────────────
+
+/**
+ * Extract the first prose paragraph from MDX source, stripping inline markdown.
+ * Used as a fallback when `excerpt` is not set.
+ */
+function extractIntro(mdx: string): string {
+  const lines = mdx.split('\n')
+  const para: string[] = []
+  let capturing = false
+
+  for (const line of lines) {
+    const t = line.trim()
+    if (!t) {
+      if (capturing) break
+      continue
+    }
+    if (
+      t.startsWith('import ') || t.startsWith('export ') ||
+      t.startsWith('#') || t.startsWith('>') || t.startsWith('!') ||
+      t.startsWith('<') || t.startsWith(':::') || t.startsWith('::') ||
+      t.startsWith('---') || t.startsWith('```') || t.startsWith('|') ||
+      t.startsWith('- ') || t.startsWith('* ') || /^\d+\. /.test(t)
+    ) {
+      if (capturing) break
+      continue
+    }
+    capturing = true
+    para.push(t)
+  }
+
+  return para.join(' ')
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/\*(.*?)\*/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/_{1,2}([^_]+)_{1,2}/g, '$1')
+    .trim()
+}
+
+function getIntro(article: { excerpt: string | null; contentMdx: string }): string {
+  return article.excerpt || extractIntro(article.contentMdx)
+}
+
 export default async function HomePage() {
   // ── Data queries ──────────────────────────────────────────────────
 
@@ -44,6 +88,11 @@ export default async function HomePage() {
   const pairLeft = articles[2]
   const pairRight = articles[3]
   const listArticles = articles.slice(4)
+
+  const leadIntro      = lead      ? getIntro(lead)      : null
+  const featureIntro   = feature   ? getIntro(feature)   : null
+  const pairLeftIntro  = pairLeft  ? getIntro(pairLeft)  : null
+  const pairRightIntro = pairRight ? getIntro(pairRight) : null
 
   // ── Helpers ───────────────────────────────────────────────────────
 
@@ -98,6 +147,7 @@ export default async function HomePage() {
                 &#9825; {lead._count.endorsements.toLocaleString('en-NG')}
               </span>
             </div>
+            {leadIntro && <p className="lead-intro">{leadIntro}</p>}
             {lead.rebuttedBy.length > 0 && (
               <span className="rb-inline">
                 <span className="rb-glyph" aria-hidden="true">&#8644;</span>
@@ -191,6 +241,7 @@ export default async function HomePage() {
                   <span className="rb-pill">&nbsp;&#8644; Rebutted</span>
                 )}
               </div>
+              {featureIntro && <p className="feature-intro">{featureIntro}</p>}
             </article>
           </Link>
           <hr className="rule rule-thin" />
@@ -208,6 +259,7 @@ export default async function HomePage() {
                   <h3 className="pair-headline">{pairLeft.headline}</h3>
                   {pairLeft.deck && <p className="pair-deck">{pairLeft.deck}</p>}
                   <div className="pair-meta">{pairLeft.author.name}&nbsp;·&nbsp;{pairLeft.readMinutes} min</div>
+                  {pairLeftIntro && <p className="pair-intro">{pairLeftIntro}</p>}
                 </article>
               </Link>
             )}
@@ -218,6 +270,7 @@ export default async function HomePage() {
                   <h3 className="pair-headline">{pairRight.headline}</h3>
                   {pairRight.deck && <p className="pair-deck">{pairRight.deck}</p>}
                   <div className="pair-meta">{pairRight.author.name}&nbsp;·&nbsp;{pairRight.readMinutes} min</div>
+                  {pairRightIntro && <p className="pair-intro">{pairRightIntro}</p>}
                 </article>
               </Link>
             )}
@@ -248,6 +301,7 @@ export default async function HomePage() {
                     <div className="hl-meta">
                       {a.author.name}&nbsp;·&nbsp;{fmtDate(a.publishedAt)}&nbsp;·&nbsp;{a.readMinutes} min
                     </div>
+                    {(() => { const intro = getIntro(a); return intro ? <div className="hl-intro">{intro}</div> : null })()}
                   </Link>
                 </li>
               ))}

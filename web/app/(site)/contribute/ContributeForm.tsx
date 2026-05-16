@@ -28,6 +28,7 @@ function countWordsHtml(html: string): number {
 export function ContributeForm({ userName, userEmail }: Props) {
   const [headline, setHeadline] = useState('')
   const [deck, setDeck] = useState('')
+  const [excerpt, setExcerpt] = useState('')
   const [body, setBody] = useState('')   // stores HTML from rich editor
   const [affiliation, setAffiliation] = useState('')
   const [coi, setCoi] = useState('')
@@ -54,7 +55,7 @@ export function ContributeForm({ userName, userEmail }: Props) {
       const res = await fetch('/api/contribute', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ headline, deck, body, affiliation, coiDisclosure: coi }),
+        body: JSON.stringify({ headline, deck, excerpt, body, affiliation, coiDisclosure: coi }),
       })
       if (!res.ok) {
         const data = await res.json() as { error?: string }
@@ -118,6 +119,23 @@ export function ContributeForm({ userName, userEmail }: Props) {
           maxLength={300}
         />
         <p className="contribute-hint">This appears directly beneath the headline in the published article.</p>
+      </div>
+
+      {/* Excerpt */}
+      <div className="contribute-field">
+        <label className="contribute-label" htmlFor="cf-excerpt">
+          Excerpt / teaser
+        </label>
+        <textarea
+          id="cf-excerpt"
+          className="contribute-input"
+          value={excerpt}
+          onChange={(e) => setExcerpt(e.target.value.slice(0, 300))}
+          rows={3}
+          maxLength={300}
+          placeholder="2–3 sentences that draw the reader in. This appears as a preview of your article."
+        />
+        <p className="contribute-hint">{excerpt.length}/300 characters — optional, but recommended.</p>
       </div>
 
       {/* Article body — rich text editor */}

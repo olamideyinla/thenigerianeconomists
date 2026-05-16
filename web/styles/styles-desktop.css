@@ -104,6 +104,11 @@
     font-size: 12.5px;
   }
 
+  .lead-intro    { font-size: 18px; -webkit-line-clamp: 6; max-width: 680px; }
+  .feature-intro { font-size: 16px; -webkit-line-clamp: 4; }
+  .pair-intro    { font-size: 13.5px; -webkit-line-clamp: 3; }
+  .hl-intro      { font-size: 13.5px; }
+
   /* Synth strip wider, more elegant */
   .synth-strip {
     padding: 28px var(--gutter);

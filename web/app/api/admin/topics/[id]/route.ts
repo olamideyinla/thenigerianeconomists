@@ -1,4 +1,5 @@
 import { type NextRequest } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
 
@@ -9,19 +10,13 @@ async function requireEditor() {
   return session.user
 }
 
-export async function GET() {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   if (!await requireEditor()) return Response.json({ error: 'Unauthorized' }, { status: 401 })
-  const topics = await db.topic.findMany({
-    orderBy: { displayOrder: 'asc' },
-    include: { _count: { select: { articles: true } } },
-  })
-  return Response.json(topics)
-}
-
-export async function POST(req: NextRequest) {
-  if (!await requireEditor()) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+  const { id } = await params
   const body = await req.json()
-  const topic = await db.topic.create({
+
+  const topic = await db.topic.update({
+    where: { id },
     data: {
       name: body.name,
       slug: body.slug,
@@ -29,5 +24,9 @@ export async function POST(req: NextRequest) {
       displayOrder: body.displayOrder ?? 0,
     },
   })
+
+  revalidatePath('/')
+  revalidatePath('/admin/topics')
+
   return Response.json({ topic })
 }

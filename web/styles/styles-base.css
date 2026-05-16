@@ -507,6 +507,20 @@ body {
   color: var(--accent);
   border-radius: 2px;
 }
+/* Intro previews on homepage cards */
+.lead-intro, .feature-intro, .pair-intro, .hl-intro {
+  font-family: var(--font-body);
+  line-height: 1.6;
+  color: var(--ink);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.lead-intro    { font-size: 16px; margin-top: 16px; -webkit-line-clamp: 5; }
+.feature-intro { font-size: 15px; margin-top: 14px; -webkit-line-clamp: 4; max-width: 640px; }
+.pair-intro    { font-size: 13px; margin-top: 10px; -webkit-line-clamp: 3; }
+.hl-intro      { font-size: 13px; margin-top: 6px;  -webkit-line-clamp: 2; color: var(--ink-soft); }
+
 .lead-likes, .hl-likes {
   color: var(--ink-soft);
   font-variant-numeric: tabular-nums;

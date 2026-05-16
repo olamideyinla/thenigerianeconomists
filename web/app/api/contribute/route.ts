@@ -14,12 +14,13 @@ export async function POST(req: NextRequest) {
   const body = await req.json() as {
     headline?: string
     deck?: string
+    excerpt?: string
     body?: string
     affiliation?: string
     coiDisclosure?: string
   }
 
-  const { headline, deck, body: articleBody, affiliation, coiDisclosure } = body
+  const { headline, deck, excerpt, body: articleBody, affiliation, coiDisclosure } = body
 
   if (!headline?.trim()) {
     return NextResponse.json({ error: 'A headline is required.' }, { status: 400 })
@@ -54,6 +55,7 @@ export async function POST(req: NextRequest) {
         name: session.user.name ?? session.user.email,
         headline: headline.trim(),
         deck: deck.trim() || null,
+        excerpt: excerpt?.trim() || null,
         body: articleBody.trim(),
         wordCount,
         affiliation: affiliation?.trim() || null,
@@ -81,6 +83,7 @@ export async function POST(req: NextRequest) {
         <p><strong>From:</strong> ${session.user.name ?? ''} &lt;${session.user.email}&gt;</p>
         <p><strong>Headline:</strong> ${headline.trim()}</p>
         <p><strong>Subtitle:</strong> ${deck.trim()}</p>
+        ${excerpt?.trim() ? `<p><strong>Excerpt:</strong> ${excerpt.trim()}</p>` : ''}
         <p><strong>Word count:</strong> ${wordCount.toLocaleString()}</p>
         ${affiliation ? `<p><strong>Affiliation:</strong> ${affiliation}</p>` : ''}
         ${coiDisclosure ? `<p><strong>COI disclosure:</strong> ${coiDisclosure}</p>` : ''}

@@ -522,6 +522,7 @@ model Submission {
   name          String
   headline      String
   deck          String?          // subtitle / standfirst
+  excerpt       String?          // short teaser paragraph (≤ 300 chars)
   body          String           // full article text as submitted
   wordCount     Int
   affiliation   String?

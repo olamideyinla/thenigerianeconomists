@@ -70,13 +70,28 @@ const geistMono = Geist_Mono({
 
 /* ── Metadata ───────────────────────────────────────────────────── */
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
+
 export const metadata: Metadata = {
   title: {
     default: 'The Nigerian Economists',
     template: '%s | The Nigerian Economists',
   },
   description: 'Rigorous economic analysis and commentary on Nigeria and Africa.',
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
+  metadataBase: new URL(SITE_URL),
+  openGraph: {
+    siteName: 'The Nigerian Economists',
+    title: 'The Nigerian Economists',
+    description: 'Rigorous economic analysis and commentary on Nigeria and Africa.',
+    url: SITE_URL,
+    type: 'website',
+    locale: 'en_NG',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'The Nigerian Economists',
+    description: 'Rigorous economic analysis and commentary on Nigeria and Africa.',
+  },
 }
 
 /* ── Root layout ────────────────────────────────────────────────── */
