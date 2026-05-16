@@ -121,6 +121,7 @@ enum SubmissionStatus {
 model Author {
   id          String   @id @default(cuid())
   slug        String   @unique
+  salutation  String?  // e.g. "Dr.", "Prof.", "Engr.", "Barr."
   name        String
   initials    String
   role        String

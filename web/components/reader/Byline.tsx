@@ -1,17 +1,19 @@
 interface BylineProps {
   name: string
+  salutation?: string | null
   role: string
   date?: string
   readMins?: number
   compact?: boolean
 }
 
-export function Byline({ name, role, date, readMins, compact }: BylineProps) {
+export function Byline({ name, salutation, role, date, readMins, compact }: BylineProps) {
+  const displayName = salutation ? `${salutation} ${name}` : name
   return (
     <div className={`byline${compact ? ' byline-compact' : ''}`}>
       <div className="byline-row">
         <span className="byline-by">By</span>
-        <span className="byline-name">{name}</span>
+        <span className="byline-name">{displayName}</span>
       </div>
       <div className="byline-meta">
         <span>{role}</span>

@@ -272,6 +272,7 @@ export default async function ArticlePage({ params }: PageProps) {
 
             <Byline
               name={article.author.name}
+              salutation={article.author.salutation}
               role={article.author.role}
               date={article.publishedAt ? formatDate(article.publishedAt) : undefined}
               readMins={article.readMinutes}
@@ -350,7 +351,11 @@ export default async function ArticlePage({ params }: PageProps) {
                 />
               )}
               <div className="ac-body">
-                <div className="ac-name">{article.author.name}</div>
+                <div className="ac-name">
+                  {article.author.salutation
+                    ? `${article.author.salutation} ${article.author.name}`
+                    : article.author.name}
+                </div>
                 <div className="ac-role">
                   {article.author.role}
                   {article.author.affiliation

@@ -49,7 +49,9 @@ export default async function AuthorPage({ params }: PageProps) {
     <div className="page page-topic">
       <header className="topic-head">
         <span className="kicker kicker-accent">Contributor</span>
-        <h1 className="topic-title">{author.name}</h1>
+        <h1 className="topic-title">
+          {author.salutation ? `${author.salutation} ${author.name}` : author.name}
+        </h1>
         <p className="topic-deck">
           {author.role} · {author.affiliation}
         </p>

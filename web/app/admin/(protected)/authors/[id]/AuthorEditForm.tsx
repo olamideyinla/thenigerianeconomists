@@ -10,8 +10,23 @@ interface Disclosure {
   effectiveTo: Date | null
 }
 
+const SALUTATIONS = [
+  '',
+  'Dr.',
+  'Prof.',
+  'Mr.',
+  'Mrs.',
+  'Ms.',
+  'Engr.',
+  'Barr.',
+  'Hon.',
+  'Chief',
+  'Amb.',
+]
+
 interface Author {
   id: string
+  salutation: string | null
   name: string
   slug: string
   role: string
@@ -26,6 +41,7 @@ interface Author {
 
 export function AuthorEditForm({ author }: { author: Author }) {
   const [fields, setFields] = useState({
+    salutation: author.salutation ?? '',
     name: author.name,
     slug: author.slug,
     role: author.role,
@@ -79,6 +95,18 @@ export function AuthorEditForm({ author }: { author: Author }) {
           Profile
         </h2>
         <div className="admin-form-row">
+          <div className="admin-form-field" style={{ maxWidth: 140, flexShrink: 0 }}>
+            <label className="admin-form-label">Salutation</label>
+            <select
+              className="ref-field"
+              value={fields.salutation}
+              onChange={(e) => set('salutation', e.target.value)}
+            >
+              {SALUTATIONS.map((s) => (
+                <option key={s} value={s}>{s || '— none —'}</option>
+              ))}
+            </select>
+          </div>
           <div className="admin-form-field">
             <label className="admin-form-label">Name</label>
             <input className="ref-field" value={fields.name} onChange={(e) => set('name', e.target.value)} />

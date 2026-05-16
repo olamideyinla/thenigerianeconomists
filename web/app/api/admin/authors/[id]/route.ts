@@ -16,6 +16,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const author = await db.author.update({
     where: { id },
     data: {
+      salutation: body.salutation || null,
       name: body.name,
       slug: body.slug,
       role: body.role,
