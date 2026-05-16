@@ -85,7 +85,7 @@ export const metadata: Metadata = {
     description: 'Rigorous economic analysis and commentary on Nigeria and Africa.',
     url: SITE_URL,
     type: 'website',
-    locale: 'en_NG',
+    locale: 'en_US',
   },
   twitter: {
     card: 'summary_large_image',
