@@ -33,7 +33,7 @@ export default async function ArticleEditorPage({ params }: PageProps) {
         orderBy: { position: 'asc' },
       },
     },
-  })
+  }).catch(() => null)
 
   if (!article) notFound()
 

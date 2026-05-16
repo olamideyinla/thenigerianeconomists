@@ -43,9 +43,9 @@ export default async function AdminArticlesPage({ searchParams }: PageProps) {
       orderBy: { updatedAt: 'desc' },
       take: 50,
       include: { author: true, topic: true },
-    }),
+    }).catch(() => []),
     db.topic.findMany({ orderBy: { displayOrder: 'asc' }, select: { id: true, name: true } }),
-    db.submission.findMany({ orderBy: { createdAt: 'desc' }, take: 100 }),
+    db.submission.findMany({ orderBy: { createdAt: 'desc' }, take: 100 }).catch(() => []),
   ])
 
   const statuses = ['DRAFT', 'IN_REVIEW', 'SCHEDULED', 'PUBLISHED', 'RETRACTED']

@@ -21,7 +21,7 @@ export default async function AdminAuthorPage({ params }: PageProps) {
     include: {
       disclosures: { orderBy: { effectiveFrom: 'desc' } },
     },
-  })
+  }).catch(() => null)
   if (!author) notFound()
 
   return (
