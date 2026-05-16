@@ -32,6 +32,8 @@ export function ContributeForm({ userName, userEmail }: Props) {
   const [body, setBody] = useState('')   // stores HTML from rich editor
   const [affiliation, setAffiliation] = useState('')
   const [coi, setCoi] = useState('')
+  const [docxFile, setDocxFile] = useState<File | null>(null)
+  const [uploading, setUploading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -52,10 +54,28 @@ export function ContributeForm({ userName, userEmail }: Props) {
     setSubmitting(true)
     setError('')
     try {
+      // Upload .docx if one was selected
+      let docxUrl: string | undefined
+      if (docxFile) {
+        setUploading(true)
+        const fd = new FormData()
+        fd.append('file', docxFile)
+        const upRes = await fetch('/api/contribute/upload', { method: 'POST', body: fd })
+        setUploading(false)
+        if (!upRes.ok) {
+          const d = await upRes.json() as { error?: string }
+          setError(d.error ?? 'File upload failed. Please try again.')
+          setSubmitting(false)
+          return
+        }
+        const { url } = await upRes.json() as { url: string }
+        docxUrl = url
+      }
+
       const res = await fetch('/api/contribute', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ headline, deck, excerpt, body, affiliation, coiDisclosure: coi }),
+        body: JSON.stringify({ headline, deck, excerpt, body, affiliation, coiDisclosure: coi, docxUrl }),
       })
       if (!res.ok) {
         const data = await res.json() as { error?: string }
@@ -67,6 +87,7 @@ export function ContributeForm({ userName, userEmail }: Props) {
       setError('Unexpected error. Please try again.')
     } finally {
       setSubmitting(false)
+      setUploading(false)
     }
   }
 
@@ -161,6 +182,26 @@ export function ContributeForm({ userName, userEmail }: Props) {
         )}
       </div>
 
+      {/* Word document attachment */}
+      <div className="contribute-field">
+        <label className="contribute-label" htmlFor="cf-docx">
+          Attach Word document{' '}
+          <span className="contribute-hint-inline">(optional — .docx or .doc, max 20 MB)</span>
+        </label>
+        <input
+          id="cf-docx"
+          type="file"
+          accept=".docx,.doc,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword"
+          className="contribute-input"
+          onChange={(e) => setDocxFile(e.target.files?.[0] ?? null)}
+        />
+        {docxFile && (
+          <p className="contribute-hint">
+            {docxFile.name} ({(docxFile.size / 1024).toFixed(0)} KB)
+          </p>
+        )}
+      </div>
+
       {/* Metadata row */}
       <div className="contribute-row-2">
         <div className="contribute-field">
@@ -196,7 +237,7 @@ export function ContributeForm({ userName, userEmail }: Props) {
         className="contribute-submit"
         disabled={submitting || !canSubmit}
       >
-        {submitting ? 'Submitting…' : 'Submit article'}
+        {uploading ? 'Uploading file…' : submitting ? 'Submitting…' : 'Submit article'}
       </button>
     </form>
   )

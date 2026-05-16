@@ -528,6 +528,7 @@ model Submission {
   wordCount     Int
   affiliation   String?
   coiDisclosure String?
+  docxUrl       String?          // optional Word attachment stored in R2
   status        SubmissionStatus @default(PENDING)
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt

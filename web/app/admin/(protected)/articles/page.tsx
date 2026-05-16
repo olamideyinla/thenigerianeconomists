@@ -186,6 +186,7 @@ export default async function AdminArticlesPage({ searchParams }: PageProps) {
                   <th>Words</th>
                   <th>Status</th>
                   <th>Received</th>
+                  <th>File</th>
                   <th></th>
                 </tr>
               </thead>
@@ -222,6 +223,19 @@ export default async function AdminArticlesPage({ searchParams }: PageProps) {
                     </td>
                     <td style={{ whiteSpace: 'nowrap', color: '#6b7280', fontSize: 13 }}>
                       {format(new Date(s.createdAt), 'd MMM yyyy')}
+                    </td>
+                    <td>
+                      {s.docxUrl ? (
+                        <a
+                          href={s.docxUrl}
+                          download
+                          style={{ fontSize: 12, color: '#2563eb', textDecoration: 'underline', whiteSpace: 'nowrap' }}
+                        >
+                          .docx ↓
+                        </a>
+                      ) : (
+                        <span style={{ color: '#d1d5db', fontSize: 12 }}>—</span>
+                      )}
                     </td>
                     <td>
                       <SubmissionActions submissionId={s.id} currentStatus={s.status} />

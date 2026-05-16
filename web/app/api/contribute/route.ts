@@ -18,9 +18,10 @@ export async function POST(req: NextRequest) {
     body?: string
     affiliation?: string
     coiDisclosure?: string
+    docxUrl?: string
   }
 
-  const { headline, deck, excerpt, body: articleBody, affiliation, coiDisclosure } = body
+  const { headline, deck, excerpt, body: articleBody, affiliation, coiDisclosure, docxUrl } = body
 
   if (!headline?.trim()) {
     return NextResponse.json({ error: 'A headline is required.' }, { status: 400 })
@@ -60,6 +61,7 @@ export async function POST(req: NextRequest) {
         wordCount,
         affiliation: affiliation?.trim() || null,
         coiDisclosure: coiDisclosure?.trim() || null,
+        docxUrl: docxUrl || null,
       },
     })
 
