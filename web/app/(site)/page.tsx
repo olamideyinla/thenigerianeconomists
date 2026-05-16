@@ -206,6 +206,7 @@ export default async function HomePage() {
                 <article className="pair-card">
                   <span className="kicker">{pairLeft.topic.name}</span>
                   <h3 className="pair-headline">{pairLeft.headline}</h3>
+                  {pairLeft.deck && <p className="pair-deck">{pairLeft.deck}</p>}
                   <div className="pair-meta">{pairLeft.author.name}&nbsp;·&nbsp;{pairLeft.readMinutes} min</div>
                 </article>
               </Link>
@@ -215,6 +216,7 @@ export default async function HomePage() {
                 <article className="pair-card">
                   <span className="kicker">{pairRight.topic.name}</span>
                   <h3 className="pair-headline">{pairRight.headline}</h3>
+                  {pairRight.deck && <p className="pair-deck">{pairRight.deck}</p>}
                   <div className="pair-meta">{pairRight.author.name}&nbsp;·&nbsp;{pairRight.readMinutes} min</div>
                 </article>
               </Link>
@@ -242,6 +244,7 @@ export default async function HomePage() {
                         <span className="rb-pill">&nbsp;&#8644; Rebutted</span>
                       )}
                     </div>
+                    {a.deck && <div className="hl-deck">{a.deck}</div>}
                     <div className="hl-meta">
                       {a.author.name}&nbsp;·&nbsp;{fmtDate(a.publishedAt)}&nbsp;·&nbsp;{a.readMinutes} min
                     </div>
