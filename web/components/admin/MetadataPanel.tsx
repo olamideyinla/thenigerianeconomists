@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, forwardRef, useImperativeHandle } from 'react'
 import { Button } from '@/components/ui/button'
 import { saveArticleDraft } from '@/app/admin/(protected)/articles/[id]/actions'
 
@@ -22,7 +22,23 @@ interface MetadataPanelProps {
   topics: Array<{ id: string; name: string }>
 }
 
-export function MetadataPanel({ article, authors, topics }: MetadataPanelProps) {
+export interface MetadataPanelHandle {
+  getFields: () => {
+    slug: string
+    headline: string
+    deck: string
+    kicker: string
+    excerpt: string
+    readMinutes: number
+    wordCount: number
+    authorId: string
+    topicId: string
+    scheduledFor: string
+  }
+}
+
+export const MetadataPanel = forwardRef<MetadataPanelHandle, MetadataPanelProps>(
+function MetadataPanel({ article, authors, topics }, ref) {
   const [fields, setFields] = useState({
     slug: article.slug ?? '',
     headline: article.headline ?? '',
@@ -39,27 +55,37 @@ export function MetadataPanel({ article, authors, topics }: MetadataPanelProps) 
   })
   const [, startTransition] = useTransition()
   const [saved, setSaved] = useState(false)
+  const [error, setError] = useState('')
+
+  useImperativeHandle(ref, () => ({
+    getFields: () => ({ ...fields }),
+  }))
 
   function set(key: string, value: string | number) {
     setFields((f) => ({ ...f, [key]: value }))
   }
 
   function save() {
+    setError('')
     startTransition(async () => {
-      await saveArticleDraft(article.id, {
-        slug: fields.slug,
-        headline: fields.headline,
-        deck: fields.deck,
-        kicker: fields.kicker,
-        excerpt: fields.excerpt,
-        readMinutes: Number(fields.readMinutes),
-        wordCount: Number(fields.wordCount),
-        authorId: fields.authorId,
-        topicId: fields.topicId,
-        scheduledFor: fields.scheduledFor || null,
-      })
-      setSaved(true)
-      setTimeout(() => setSaved(false), 2000)
+      try {
+        await saveArticleDraft(article.id, {
+          slug: fields.slug,
+          headline: fields.headline,
+          deck: fields.deck,
+          kicker: fields.kicker,
+          excerpt: fields.excerpt,
+          readMinutes: Number(fields.readMinutes),
+          wordCount: Number(fields.wordCount),
+          authorId: fields.authorId,
+          topicId: fields.topicId,
+          scheduledFor: fields.scheduledFor || null,
+        })
+        setSaved(true)
+        setTimeout(() => setSaved(false), 2000)
+      } catch {
+        setError('Save failed. Please try again.')
+      }
     })
   }
 
@@ -125,7 +151,8 @@ export function MetadataPanel({ article, authors, topics }: MetadataPanelProps) 
       <div className="flex items-center gap-2 pt-1">
         <Button size="sm" onClick={save}>Save metadata</Button>
         {saved && <span className="text-xs text-green-600">Saved</span>}
+        {error && <span className="text-xs text-red-600">{error}</span>}
       </div>
     </div>
   )
-}
+})

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ReferencesPanel } from './ReferencesPanel'
 import { FigurePanel } from './FigurePanel'
-import { MetadataPanel } from './MetadataPanel'
+import { MetadataPanel, type MetadataPanelHandle } from './MetadataPanel'
 import {
   saveArticleDraft,
   publishArticle,
@@ -74,6 +74,7 @@ export function ArticleEditor({ article, authors, topics }: ArticleEditorProps) 
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const editorRef = useRef<any>(null)
+  const metaPanelRef = useRef<MetadataPanelHandle | null>(null)
   const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const scheduleAutoSave = useCallback(
@@ -92,7 +93,22 @@ export function ArticleEditor({ article, authors, topics }: ArticleEditorProps) 
     setSaving(true)
     setSaveMsg('')
     try {
-      await saveArticleDraft(article.id, { contentMdx })
+      const meta = metaPanelRef.current?.getFields()
+      await saveArticleDraft(article.id, {
+        contentMdx,
+        ...(meta ? {
+          slug: meta.slug,
+          headline: meta.headline,
+          deck: meta.deck,
+          kicker: meta.kicker,
+          excerpt: meta.excerpt,
+          readMinutes: Number(meta.readMinutes),
+          wordCount: Number(meta.wordCount),
+          authorId: meta.authorId,
+          topicId: meta.topicId,
+          scheduledFor: meta.scheduledFor || null,
+        } : {}),
+      })
       setPreviewKey((k) => k + 1)
       setSaveMsg('Saved')
     } finally {
@@ -273,6 +289,7 @@ export function ArticleEditor({ article, authors, topics }: ArticleEditorProps) 
           <div className="editor-panel-content">
             {activePanel === 'metadata' && (
               <MetadataPanel
+                ref={metaPanelRef}
                 article={article}
                 authors={authors}
                 topics={topics}

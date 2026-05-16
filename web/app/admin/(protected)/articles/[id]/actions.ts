@@ -53,9 +53,11 @@ export async function saveArticleDraft(
 
   revalidatePath(`/admin/articles/${id}`)
 
-  // For published articles also refresh the reader page and search index
+  // For published articles also refresh the reader page, topic pages, and search index
   if (article.status === 'PUBLISHED' && article.slug) {
     revalidatePath(`/articles/${article.slug}`)
+    revalidatePath('/')
+    revalidatePath('/topics', 'layout')
     void indexArticle({
       id: article.id,
       slug: article.slug,
