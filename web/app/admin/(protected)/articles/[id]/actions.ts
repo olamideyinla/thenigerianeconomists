@@ -6,7 +6,7 @@ import { db } from '@/lib/db'
 import { writeAuditLog } from '@/lib/audit'
 import { indexArticle, removeFromIndex, mdxToSearchText } from '@/lib/search'
 import { getResend } from '@/lib/email'
-import { htmlToMdx } from '@/lib/html-to-mdx'
+import { htmlToMdx, sanitizeMdx } from '@/lib/html-to-mdx'
 
 // ── Auth guard ────────────────────────────────────────────────────
 
@@ -217,7 +217,7 @@ export async function fixArticleMdx(id: string): Promise<{ contentMdx: string }>
   const article = await db.article.findUnique({ where: { id }, select: { contentMdx: true } })
   if (!article) throw new Error('Article not found')
 
-  const fixed = htmlToMdx(article.contentMdx ?? '')
+  const fixed = sanitizeMdx(article.contentMdx ?? '')
   await db.article.update({ where: { id }, data: { contentMdx: fixed } })
   revalidatePath(`/admin/articles/${id}`)
   return { contentMdx: fixed }

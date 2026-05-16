@@ -36,11 +36,11 @@ function mdxFallback(mdx: string): React.ReactNode {
     .replace(/^(import|export)\s+.*/gm, '')
     // Strip heading markers → preserve text
     .replace(/^#{1,6}\s+/gm, '')
-    // Bold / italic
-    .replace(/\*\*(.+?)\*\*/g, '$1')
-    .replace(/\*(.+?)\*/g, '$1')
+    // Bold / italic — [\s\S]+? matches across soft line-breaks
+    .replace(/\*\*([\s\S]+?)\*\*/g, '$1')
+    .replace(/\*([^*\n][\s\S]*?)\*/g, '$1')
     // Inline code
-    .replace(/`(.+?)`/g, '$1')
+    .replace(/`([\s\S]+?)`/g, '$1')
     // GFM table rows — join cells with spaces
     .replace(/^\|(.+)\|$/gm, (_, cells: string) =>
       cells.split('|').map((c: string) => c.trim()).filter(Boolean).join('  ·  ')
