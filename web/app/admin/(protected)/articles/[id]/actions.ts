@@ -5,7 +5,8 @@ import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { writeAuditLog } from '@/lib/audit'
 import { indexArticle, removeFromIndex, mdxToSearchText } from '@/lib/search'
-import { getResend } from '@/lib/email'
+import { getResend, sendEmail } from '@/lib/email'
+import { ArticlePublishedEmail } from '@/emails/ArticlePublishedEmail'
 import { htmlToMdx, sanitizeMdx } from '@/lib/html-to-mdx'
 
 // ── Auth guard ────────────────────────────────────────────────────
@@ -150,6 +151,11 @@ export async function publishArticle(id: string): Promise<{ errors?: string[] }>
   revalidatePath(`/admin/articles/${id}`)
   revalidatePath(`/articles/${article.slug}`)
 
+  // ── Author published notification ────────────────────────────────
+  void notifyAuthorPublished(article).catch(
+    (e) => console.error('[publish] author notification failed', e),
+  )
+
   // ── Rebuttal alert notifications ─────────────────────────────────
   // If this article is a rebuttal of another, notify subscribers of the original.
   void sendRebuttalNotifications(article.id, article.slug, article.headline).catch(
@@ -157,6 +163,36 @@ export async function publishArticle(id: string): Promise<{ errors?: string[] }>
   )
 
   return {}
+}
+
+async function notifyAuthorPublished(article: {
+  id: string
+  slug: string
+  headline: string
+  deck: string
+  kicker: string | null
+  readMinutes: number
+  author: { name: string; email: string | null; salutation: string | null }
+  topic: { name: string }
+}) {
+  if (!article.author.email) return
+  await sendEmail({
+    to: article.author.email,
+    subject: `Your article is live — "${article.headline}"`,
+    react: ArticlePublishedEmail({
+      authorName: article.author.name,
+      salutation: article.author.salutation,
+      article: {
+        headline: article.headline,
+        deck: article.deck,
+        slug: article.slug,
+        kicker: article.kicker,
+        readMinutes: article.readMinutes,
+      },
+      topic: article.topic,
+    }),
+    emailType: 'article_published',
+  })
 }
 
 async function sendRebuttalNotifications(

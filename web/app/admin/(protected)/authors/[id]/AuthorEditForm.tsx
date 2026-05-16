@@ -32,6 +32,7 @@ interface Author {
   role: string
   affiliation: string | null
   bio: string | null
+  email: string | null
   avatarUrl: string | null
   twitter: string | null
   linkedin: string | null
@@ -47,6 +48,7 @@ export function AuthorEditForm({ author }: { author: Author }) {
     role: author.role,
     affiliation: author.affiliation ?? '',
     bio: author.bio ?? '',
+    email: author.email ?? '',
     avatarUrl: author.avatarUrl ?? '',
     twitter: author.twitter ?? '',
     linkedin: author.linkedin ?? '',
@@ -129,6 +131,10 @@ export function AuthorEditForm({ author }: { author: Author }) {
         <div className="admin-form-field">
           <label className="admin-form-label">Bio (markdown)</label>
           <textarea className="ref-field" rows={4} value={fields.bio} onChange={(e) => set('bio', e.target.value)} />
+        </div>
+        <div className="admin-form-field">
+          <label className="admin-form-label">Contact email <span style={{ color: '#9ca3af', fontWeight: 400 }}>(for editorial notifications)</span></label>
+          <input className="ref-field" type="email" value={fields.email} onChange={(e) => set('email', e.target.value)} placeholder="author@example.com" />
         </div>
         <div className="admin-form-field">
           <label className="admin-form-label">Avatar URL</label>

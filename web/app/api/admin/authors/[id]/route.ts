@@ -22,6 +22,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       role: body.role,
       affiliation: body.affiliation || '',
       bio: body.bio || '',
+      email: body.email || null,
       avatarUrl: body.avatarUrl || null,
       twitter: body.twitter || null,
       linkedin: body.linkedin || null,

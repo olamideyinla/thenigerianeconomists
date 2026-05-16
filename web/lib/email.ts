@@ -12,6 +12,7 @@ export type EmailType =
   | 'newsletter_weekly'
   | 'newsletter_monthly'
   | 'correction_notice'
+  | 'article_published'
 
 // Lazy Resend instance — never constructed at module load time (avoids build errors)
 let _resend: Resend | null = null
