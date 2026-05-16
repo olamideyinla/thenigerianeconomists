@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 
 interface Topic {
@@ -26,7 +25,7 @@ export function TopicForm({ editing, onCancel, onSaved }: TopicFormProps) {
     displayOrder: String(editing?.displayOrder ?? 0),
   })
   const [saving, setSaving] = useState(false)
-  const router = useRouter()
+  const [error, setError] = useState<string | null>(null)
 
   function set(k: string, v: string) { setFields((f) => ({ ...f, [k]: v })) }
 
@@ -36,25 +35,29 @@ export function TopicForm({ editing, onCancel, onSaved }: TopicFormProps) {
 
   async function save() {
     setSaving(true)
+    setError(null)
     const payload = { ...fields, displayOrder: Number(fields.displayOrder) }
+    let res: Response
     if (editing) {
-      await fetch(`/api/admin/topics/${editing.id}`, {
+      res = await fetch(`/api/admin/topics/${editing.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
     } else {
-      await fetch('/api/admin/topics', {
+      res = await fetch('/api/admin/topics', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
-      setFields({ name: '', slug: '', description: '', displayOrder: '0' })
     }
     setSaving(false)
-    router.refresh()
+    if (!res.ok) {
+      setError('Failed to save. Please try again.')
+      return
+    }
+    if (!editing) setFields({ name: '', slug: '', description: '', displayOrder: '0' })
     onSaved?.()
-    onCancel?.()
   }
 
   return (
@@ -84,6 +87,7 @@ export function TopicForm({ editing, onCancel, onSaved }: TopicFormProps) {
         <label className="admin-form-label">Display order</label>
         <input className="ref-field" type="number" value={fields.displayOrder} onChange={(e) => set('displayOrder', e.target.value)} />
       </div>
+      {error && <p style={{ fontSize: 12, color: '#dc2626' }}>{error}</p>}
       <div style={{ display: 'flex', gap: 8 }}>
         <Button size="sm" onClick={save} disabled={saving || !fields.name.trim() || !fields.slug.trim()}>
           {saving ? 'Saving…' : editing ? 'Save changes' : 'Add topic'}

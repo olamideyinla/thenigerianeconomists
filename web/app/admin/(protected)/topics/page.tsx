@@ -17,7 +17,7 @@ export default function AdminTopicsPage() {
   const [editing, setEditing] = useState<Topic | null>(null)
 
   async function load() {
-    const res = await fetch('/api/admin/topics')
+    const res = await fetch('/api/admin/topics', { cache: 'no-store' })
     if (res.ok) setTopics(await res.json())
   }
 
