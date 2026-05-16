@@ -214,33 +214,44 @@ export default async function ArticlePage({ params }: PageProps) {
 
   return (
     <div className="page page-article">
-      <ReadingProgress />
+      <ReadingProgress articleSlug={article.slug} />
 
       <ArticleClientShell refs={refs} figures={figures}>
         {/* article-main is the primary column; CitationRail is the second column */}
         <article className="article-main">
-          {/* ── JSON-LD ───────────────────────────────────────── */}
+          {/* ── JSON-LD (Article + NewsArticle) ──────────────── */}
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{
               __html: JSON.stringify({
                 '@context': 'https://schema.org',
-                '@type': 'Article',
+                '@type': ['Article', 'NewsArticle'],
                 headline: article.headline,
                 description: article.deck,
+                articleSection: article.topic.name,
+                keywords: article.topic.name,
                 author: {
                   '@type': 'Person',
                   name: article.author.name,
                   url: `${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/authors/${article.author.slug}`,
                 },
                 publisher: {
-                  '@type': 'Organization',
+                  '@type': 'NewsMediaOrganization',
                   name: 'The Nigerian Economists',
                   url: process.env.NEXT_PUBLIC_SITE_URL ?? '',
+                  logo: {
+                    '@type': 'ImageObject',
+                    url: `${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/icon.png`,
+                  },
                 },
                 datePublished: article.publishedAt?.toISOString(),
                 dateModified: article.updatedAt?.toISOString(),
                 url: `${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/articles/${article.slug}`,
+                mainEntityOfPage: {
+                  '@type': 'WebPage',
+                  '@id': `${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/articles/${article.slug}`,
+                },
+                isAccessibleForFree: true,
               }),
             }}
           />

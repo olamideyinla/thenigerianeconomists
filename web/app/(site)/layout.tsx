@@ -61,7 +61,13 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         <div className="sf-foot">
           <span>&#169; {new Date().getFullYear()} The Nigerian Economists.</span>
           <span aria-hidden="true">&#xB7;</span>
-          <span>All rights reserved.</span>
+          <Link href="/privacy">Privacy</Link>
+          <span aria-hidden="true">&#xB7;</span>
+          <Link href="/terms">Terms</Link>
+          <span aria-hidden="true">&#xB7;</span>
+          <Link href="/cookies">Cookies</Link>
+          <span aria-hidden="true">&#xB7;</span>
+          <Link href="/dmca">DMCA</Link>
         </div>
       </footer>
     </>

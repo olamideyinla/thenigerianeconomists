@@ -1,6 +1,11 @@
 'use client'
 import { useState } from 'react'
 
+function plausible(event: string, props?: Record<string, string>) {
+  ;(window as unknown as { plausible?: (e: string, o?: { props?: Record<string, string> }) => void })
+    .plausible?.(event, props ? { props } : undefined)
+}
+
 export function NewsletterForm() {
   const [email, setEmail] = useState('')
   const [submitted, setSubmitted] = useState(false)
@@ -23,6 +28,7 @@ export function NewsletterForm() {
         setError(data.error ?? 'Something went wrong. Please try again.')
       } else {
         setSubmitted(true)
+        plausible('Newsletter Signup')
       }
     } catch {
       setError('Something went wrong. Please try again.')

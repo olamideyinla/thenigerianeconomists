@@ -2,6 +2,11 @@
 
 import { useState } from 'react'
 
+function plausible(event: string, props?: Record<string, string>) {
+  ;(window as unknown as { plausible?: (e: string, o?: { props?: Record<string, string> }) => void })
+    .plausible?.(event, props ? { props } : undefined)
+}
+
 interface LikeBarProps {
   articleSlug: string
   articleTitle?: string
@@ -35,6 +40,7 @@ export function LikeBar({
         const data = await res.json() as { count: number; liked: boolean }
         setLiked(data.liked)
         setCount(data.count)
+        if (data.liked) plausible('Article Endorsed', { slug: articleSlug })
       }
     } finally {
       setLoading(false)
