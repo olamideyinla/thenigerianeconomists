@@ -114,11 +114,11 @@ export function htmlToMdx(html: string): string {
   s = s.replace(/<br\s*\/?>/gi, '\n')
   s = s.replace(/<hr[^>]*>/gi, '\n\n---\n\n')
 
-  // 5. Inline marks
-  s = s.replace(/<strong[^>]*>([\s\S]*?)<\/strong>/gi, (_, t) => `**${innerText(t)}**`)
-  s = s.replace(/<b[^>]*>([\s\S]*?)<\/b>/gi, (_, t) => `**${innerText(t)}**`)
-  s = s.replace(/<em[^>]*>([\s\S]*?)<\/em>/gi, (_, t) => `*${innerText(t)}*`)
-  s = s.replace(/<i[^>]*>([\s\S]*?)<\/i>/gi, (_, t) => `*${innerText(t)}*`)
+  // 5. Inline marks — wrap with spaces so adjacent text doesn't swallow the delimiters
+  s = s.replace(/<strong[^>]*>([\s\S]*?)<\/strong>/gi, (_, t) => ` **${innerText(t)}** `)
+  s = s.replace(/<b[^>]*>([\s\S]*?)<\/b>/gi, (_, t) => ` **${innerText(t)}** `)
+  s = s.replace(/<em[^>]*>([\s\S]*?)<\/em>/gi, (_, t) => ` *${innerText(t)}* `)
+  s = s.replace(/<i[^>]*>([\s\S]*?)<\/i>/gi, (_, t) => ` *${innerText(t)}* `)
   s = s.replace(/<code[^>]*>([\s\S]*?)<\/code>/gi, (_, t) => `\`${innerText(t)}\``)
 
   // 6. Convert images to Markdown syntax (preserves src and alt text).
@@ -146,6 +146,7 @@ export function htmlToMdx(html: string): string {
   s = s.replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
   // 10. Normalise whitespace
+  s = s.replace(/ {2,}/g, ' ')       // collapse multiple spaces (from inline-mark padding)
   s = s.replace(/\n{3,}/g, '\n\n').trim()
 
   return s
@@ -185,10 +186,10 @@ export function sanitizeMdx(mdx: string): string {
   s = s.replace(/<\/p>/gi, '\n\n')
   s = s.replace(/<p[^>]*>/gi, '')
   s = s.replace(/<br\s*\/?>/gi, '\n')
-  s = s.replace(/<strong[^>]*>([\s\S]*?)<\/strong>/gi, (_, t) => `**${innerText(t)}**`)
-  s = s.replace(/<b[^>]*>([\s\S]*?)<\/b>/gi, (_, t) => `**${innerText(t)}**`)
-  s = s.replace(/<em[^>]*>([\s\S]*?)<\/em>/gi, (_, t) => `*${innerText(t)}*`)
-  s = s.replace(/<i[^>]*>([\s\S]*?)<\/i>/gi, (_, t) => `*${innerText(t)}*`)
+  s = s.replace(/<strong[^>]*>([\s\S]*?)<\/strong>/gi, (_, t) => ` **${innerText(t)}** `)
+  s = s.replace(/<b[^>]*>([\s\S]*?)<\/b>/gi, (_, t) => ` **${innerText(t)}** `)
+  s = s.replace(/<em[^>]*>([\s\S]*?)<\/em>/gi, (_, t) => ` *${innerText(t)}* `)
+  s = s.replace(/<i[^>]*>([\s\S]*?)<\/i>/gi, (_, t) => ` *${innerText(t)}* `)
   // Convert images to Markdown syntax instead of stripping.
   s = s.replace(/<img\s[^>]*\/?>/gi, (tag) => {
     const src = tag.match(/src=["']([^"']+)["']/i)?.[1] ?? ''
@@ -233,6 +234,7 @@ export function sanitizeMdx(mdx: string): string {
   s = s.replace(/(?<!\{)\{(?!\{)([^}\n]*)\}/g, '&#123;$1&#125;')
 
   // 8. Normalise whitespace
+  s = s.replace(/ {2,}/g, ' ')       // collapse multiple spaces (from inline-mark padding)
   s = s.replace(/\n{3,}/g, '\n\n').trim()
 
   return s
