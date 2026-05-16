@@ -34,13 +34,39 @@ export async function generateMetadata({
   const { slug } = await params
   const article = await db.article.findUnique({
     where: { slug },
-    select: { headline: true, deck: true, kicker: true },
+    select: {
+      headline: true,
+      deck: true,
+      excerpt: true,
+      publishedAt: true,
+      author: { select: { name: true } },
+      topic: { select: { name: true } },
+    },
   })
   if (!article) return {}
+
+  // Prefer the hand-written excerpt; fall back to the deck
+  const description = article.excerpt || article.deck
+
   return {
     title: article.headline,
-    description: article.deck,
-    openGraph: { title: article.headline, description: article.deck },
+    description,
+    openGraph: {
+      title: article.headline,
+      description,
+      url: `/articles/${slug}`,
+      type: 'article',
+      siteName: 'The Nigerian Economists',
+      // og:image is automatically added by Next.js from opengraph-image.tsx
+      ...(article.publishedAt && { publishedTime: article.publishedAt.toISOString() }),
+      authors: [article.author.name],
+      section: article.topic.name,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: article.headline,
+      description,
+    },
   }
 }
 
