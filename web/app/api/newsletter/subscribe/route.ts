@@ -4,6 +4,7 @@ import { randomUUID } from 'crypto'
 import { db } from '@/lib/db'
 import { sendEmail } from '@/lib/email'
 import { NewsletterConfirmEmail } from '@/emails/NewsletterConfirmEmail'
+import { rateLimit } from '@/lib/rate-limit'
 
 const schema = z.object({
   email: z.string().email(),
@@ -11,6 +12,14 @@ const schema = z.object({
 })
 
 export async function POST(req: NextRequest) {
+  // 3 subscribe attempts per IP per hour
+  const rl = rateLimit(req, { limit: 3, windowMs: 60 * 60 * 1000, namespace: 'newsletter:sub' })
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.' },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } },
+    )
+  }
   let body: unknown
   try {
     body = await req.json()
