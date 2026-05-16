@@ -44,8 +44,31 @@ export async function saveArticleDraft(
     data.scheduledFor = fields.scheduledFor ? new Date(fields.scheduledFor) : null
   }
 
-  await db.article.update({ where: { id }, data })
+  const article = await db.article.update({
+    where: { id },
+    data,
+    include: { author: true, topic: true },
+  })
+
   revalidatePath(`/admin/articles/${id}`)
+
+  // For published articles also refresh the reader page and search index
+  if (article.status === 'PUBLISHED' && article.slug) {
+    revalidatePath(`/articles/${article.slug}`)
+    void indexArticle({
+      id: article.id,
+      slug: article.slug,
+      headline: article.headline,
+      deck: article.deck ?? '',
+      kicker: article.kicker ?? '',
+      contentText: mdxToSearchText(article.contentMdx ?? ''),
+      authorName: article.author.name,
+      topicSlug: article.topic.slug,
+      topicName: article.topic.name,
+      publishedAt: (article.publishedAt ?? new Date()).getTime(),
+      readMinutes: article.readMinutes,
+    }).catch((e) => console.error('[save] search reindex failed', e))
+  }
 }
 
 export async function validateArticle(id: string): Promise<{ errors: string[] }> {
@@ -354,4 +377,40 @@ export async function linkRebuttal(
     })
   }
   revalidatePath(`/admin/articles/${articleId}`)
+}
+
+// ── Delete article ─────────────────────────────────────────────────
+
+/**
+ * Permanently delete an article and all its data.
+ * Non-cascading relations (rebuttal links, synthesis links, corrections,
+ * endorsements, reader notes) are removed first, then the article itself
+ * is deleted (Prisma cascades references, figures, and rebuttal alerts).
+ * The MeiliSearch index entry is also removed.
+ */
+export async function deleteArticle(id: string): Promise<void> {
+  const user = await requireEditor()
+
+  // Remove from search index (non-blocking — never fails the delete)
+  void removeFromIndex(id).catch((e) => console.error('[delete] deindex failed', e))
+
+  // Remove non-cascading relations first to avoid FK constraint errors
+  await db.rebuttal.deleteMany({
+    where: { OR: [{ originalArticleId: id }, { rebuttalArticleId: id }] },
+  })
+  await db.synthesisArticle.deleteMany({ where: { articleId: id } })
+  await db.correction.deleteMany({ where: { articleId: id } })
+  await db.endorsement.deleteMany({ where: { articleId: id } })
+  await db.readerNote.deleteMany({ where: { articleId: id } })
+
+  // Delete the article — cascades to references, figures, rebuttalAlerts
+  const article = await db.article.delete({ where: { id } })
+
+  await writeAuditLog(user.id!, 'article.delete', 'Article', id, {
+    headline: article.headline,
+    status: article.status,
+  })
+
+  revalidatePath('/admin/articles')
+  if (article.slug) revalidatePath(`/articles/${article.slug}`)
 }

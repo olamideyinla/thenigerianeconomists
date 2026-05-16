@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useCallback, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -12,6 +13,7 @@ import {
   publishArticle,
   validateArticle,
   fixArticleMdx,
+  deleteArticle,
 } from '@/app/admin/(protected)/articles/[id]/actions'
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false })
@@ -60,6 +62,7 @@ interface ArticleEditorProps {
 }
 
 export function ArticleEditor({ article, authors, topics }: ArticleEditorProps) {
+  const router = useRouter()
   const [contentMdx, setContentMdx] = useState(article.contentMdx)
   const [activePanel, setActivePanel] = useState<ActivePanel>('metadata')
   const [previewKey, setPreviewKey] = useState(0)
@@ -113,6 +116,21 @@ export function ArticleEditor({ article, authors, topics }: ArticleEditorProps) 
     const { errors } = await validateArticle(article.id)
     setValidationErrors(errors)
     setShowValidation(true)
+  }
+
+  async function handleDelete() {
+    const label = article.headline ?? 'Untitled'
+    const extra = article.status === 'PUBLISHED' ? ' It is currently PUBLISHED and will be removed from the site.' : ''
+    if (!window.confirm(`Permanently delete "${label}"?${extra}\n\nThis cannot be undone.`)) return
+    setSaving(true)
+    try {
+      await deleteArticle(article.id)
+      router.push('/admin/articles')
+    } catch (e) {
+      setSaving(false)
+      console.error('[delete]', e)
+      alert('Delete failed — check the console for details.')
+    }
   }
 
   async function handleFixHtml() {
@@ -183,6 +201,9 @@ export function ArticleEditor({ article, authors, topics }: ArticleEditorProps) 
               Publish
             </Button>
           )}
+          <Button size="sm" variant="destructive" onClick={handleDelete} disabled={saving} title="Permanently delete this article">
+            Delete
+          </Button>
         </div>
 
         {/* Validation errors */}
