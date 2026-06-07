@@ -20,13 +20,14 @@ const hostname = r2Hostname()
 
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://plausible.io",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://plausible.io https://cdn.jsdelivr.net",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self'",
   "connect-src 'self' https://plausible.io",
   "frame-src 'self' https://datawrapper.de https://*.datawrapper.de https://public.flourish.studio https://flo.uri.sh https://observablehq.com",
   "frame-ancestors 'self'",
+  "worker-src blob:",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
