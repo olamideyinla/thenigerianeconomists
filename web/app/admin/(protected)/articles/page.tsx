@@ -5,7 +5,6 @@ import { formatDate } from '@/lib/format'
 import { format } from 'date-fns'
 import { NewArticleButton } from './NewArticleButton'
 import { SubmissionActions } from '../submissions/SubmissionActions'
-import { getArticlePageViews } from '@/lib/plausible'
 
 export const dynamic = 'force-dynamic'
 
@@ -35,7 +34,7 @@ export default async function AdminArticlesPage({ searchParams }: PageProps) {
     ? (status as ArticleStatus)
     : undefined
 
-  const [articles, topics, submissions, pageViews] = await Promise.all([
+  const [articles, topics, submissions] = await Promise.all([
     db.article.findMany({
       where: {
         ...(articleStatus ? { status: articleStatus } : {}),
@@ -47,9 +46,7 @@ export default async function AdminArticlesPage({ searchParams }: PageProps) {
     }),
     db.topic.findMany({ orderBy: { displayOrder: 'asc' }, select: { id: true, name: true } }),
     db.submission.findMany({ orderBy: { createdAt: 'desc' }, take: 100 }),
-    getArticlePageViews(),
   ])
-  const hasViews = Object.keys(pageViews).length > 0
 
   const statuses = ['DRAFT', 'IN_REVIEW', 'SCHEDULED', 'PUBLISHED', 'RETRACTED']
   const pendingCount = submissions.filter(s => s.status === 'PENDING').length
@@ -145,7 +142,7 @@ export default async function AdminArticlesPage({ searchParams }: PageProps) {
                   <th>Author</th>
                   <th>Topic</th>
                   <th>Status</th>
-                  {hasViews && <th>Views</th>}
+                  <th>Views</th>
                   <th>Updated</th>
                 </tr>
               </thead>
@@ -162,13 +159,11 @@ export default async function AdminArticlesPage({ searchParams }: PageProps) {
                     <td>
                       <span className={`status-badge status-${a.status}`}>{a.status}</span>
                     </td>
-                    {hasViews && (
-                      <td className="text-gray-500 text-sm" style={{ whiteSpace: 'nowrap' }}>
-                        {a.status === 'PUBLISHED' && a.slug
-                          ? (pageViews[a.slug] ?? 0).toLocaleString()
-                          : <span style={{ color: '#d1d5db' }}>—</span>}
-                      </td>
-                    )}
+                    <td className="text-gray-500 text-sm" style={{ whiteSpace: 'nowrap' }}>
+                      {a.status === 'PUBLISHED'
+                        ? a.viewCount.toLocaleString()
+                        : <span style={{ color: '#d1d5db' }}>—</span>}
+                    </td>
                     <td className="text-gray-500 text-sm">{formatDate(a.updatedAt)}</td>
                   </tr>
                 ))}

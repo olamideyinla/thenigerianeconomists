@@ -17,6 +17,7 @@ import { RebuttalIndicator } from '@/components/reader/RebuttalIndicator'
 import { RebuttalThread } from '@/components/reader/RebuttalThread'
 import { RebuttalAlertButton } from '@/components/reader/RebuttalAlertButton'
 import { ArticleClientShell } from './ArticleClientShell'
+import { ViewTracker } from '@/components/reader/ViewTracker'
 import type { RefItem } from '@/context/ReferenceContext'
 import type { FigureShape } from '@/context/FigureContext'
 import type { RebuttalEntry } from '@/components/reader/RebuttalIndicator'
@@ -215,6 +216,7 @@ export default async function ArticlePage({ params }: PageProps) {
   return (
     <div className="page page-article">
       <ReadingProgress articleSlug={article.slug} />
+      <ViewTracker slug={article.slug} />
 
       <ArticleClientShell refs={refs} figures={figures}>
         {/* article-main is the primary column; CitationRail is the second column */}
