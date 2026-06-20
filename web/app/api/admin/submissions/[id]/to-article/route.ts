@@ -92,6 +92,8 @@ export async function POST(
       wordCount: submission.wordCount,
       readMinutes,
       contentMdx,
+      submitterEmail: submission.email,
+      submitterName: submission.name,
     },
   })
 

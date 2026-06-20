@@ -158,6 +158,11 @@ export async function publishArticle(id: string): Promise<{ errors?: string[] }>
     (e) => console.error('[publish] author notification failed', e),
   )
 
+  // ── Submitter published notification ─────────────────────────────
+  void notifySubmitterPublished(id, article).catch(
+    (e) => console.error('[publish] submitter notification failed', e),
+  )
+
   // ── Rebuttal alert notifications ─────────────────────────────────
   // If this article is a rebuttal of another, notify subscribers of the original.
   void sendRebuttalNotifications(article.id, article.slug, article.headline).catch(
@@ -165,6 +170,45 @@ export async function publishArticle(id: string): Promise<{ errors?: string[] }>
   )
 
   return {}
+}
+
+async function notifySubmitterPublished(
+  articleId: string,
+  article: {
+    slug: string
+    headline: string
+    deck: string
+    kicker: string | null
+    readMinutes: number
+    author: { email: string | null }
+    topic: { name: string }
+  },
+) {
+  const row = await db.article.findUnique({
+    where: { id: articleId },
+    select: { submitterEmail: true, submitterName: true },
+  })
+  if (!row?.submitterEmail) return
+  // Avoid a duplicate if the submitter is the same person as the registered author
+  if (row.submitterEmail === article.author.email) return
+
+  await sendEmail({
+    to: row.submitterEmail,
+    subject: `Your article is live — "${article.headline}"`,
+    react: ArticlePublishedEmail({
+      authorName: row.submitterName ?? row.submitterEmail,
+      salutation: null,
+      article: {
+        headline: article.headline,
+        deck: article.deck,
+        slug: article.slug,
+        kicker: article.kicker,
+        readMinutes: article.readMinutes,
+      },
+      topic: article.topic,
+    }),
+    emailType: 'article_published',
+  })
 }
 
 async function notifyAuthorPublished(article: {
