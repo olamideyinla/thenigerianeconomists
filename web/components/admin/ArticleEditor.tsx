@@ -118,14 +118,37 @@ export function ArticleEditor({ article, authors, topics }: ArticleEditorProps) 
   }
 
   async function handlePublish() {
-    const { errors } = await validateArticle(article.id)
-    if (errors.length > 0) {
-      setValidationErrors(errors)
-      setShowValidation(true)
-      return
+    setSaving(true)
+    try {
+      // Flush unsaved metadata (including readMinutes) and content to DB before publishing
+      const meta = metaPanelRef.current?.getFields()
+      await saveArticleDraft(article.id, {
+        contentMdx,
+        ...(meta ? {
+          slug: meta.slug,
+          headline: meta.headline,
+          deck: meta.deck,
+          kicker: meta.kicker,
+          excerpt: meta.excerpt,
+          readMinutes: Number(meta.readMinutes),
+          wordCount: Number(meta.wordCount),
+          authorId: meta.authorId,
+          topicId: meta.topicId,
+          scheduledFor: meta.scheduledFor || null,
+        } : {}),
+      })
+
+      const { errors } = await validateArticle(article.id)
+      if (errors.length > 0) {
+        setValidationErrors(errors)
+        setShowValidation(true)
+        return
+      }
+      await publishArticle(article.id)
+      setSaveMsg('Published!')
+    } finally {
+      setSaving(false)
     }
-    await publishArticle(article.id)
-    setSaveMsg('Published!')
   }
 
   async function handleValidate() {
