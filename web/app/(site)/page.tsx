@@ -134,26 +134,30 @@ export default async function HomePage() {
         <Link href={`/articles/${lead.slug}`} className="lead-card-link">
           <article className="lead-card">
             <span className="kicker kicker-accent">{lead.topic.name}</span>
-            <h1 className="lead-headline">{lead.headline}</h1>
-            <p className="lead-deck">{lead.deck}</p>
-            <div className="lead-meta">
-              <span className="lead-author">{lead.author.name}</span>
-              <span aria-hidden="true">&#xB7;</span>
-              <span>{fmtDate(lead.publishedAt)}</span>
-              <span aria-hidden="true">&#xB7;</span>
-              <span>{lead.readMinutes} min</span>
-              <span aria-hidden="true">&#xB7;</span>
-              <span className="lead-likes" title="Endorsements">
-                &#9825; {lead._count.endorsements.toLocaleString('en-NG')}
-              </span>
+            <div className="lead-grid">
+              <h1 className="lead-headline">{lead.headline}</h1>
+              <div className="lead-aside">
+                <p className="lead-deck">{lead.deck}</p>
+                <div className="lead-meta">
+                  <span className="lead-author">{lead.author.name}</span>
+                  <span aria-hidden="true">&#xB7;</span>
+                  <span>{fmtDate(lead.publishedAt)}</span>
+                  <span aria-hidden="true">&#xB7;</span>
+                  <span>{lead.readMinutes} min</span>
+                  <span aria-hidden="true">&#xB7;</span>
+                  <span className="lead-likes" title="Endorsements">
+                    &#9825; {lead._count.endorsements.toLocaleString('en-NG')}
+                  </span>
+                </div>
+                {leadIntro && <p className="lead-intro">{leadIntro}</p>}
+                {lead.rebuttedBy.length > 0 && (
+                  <span className="rb-inline">
+                    <span className="rb-glyph" aria-hidden="true">&#8644;</span>
+                    Rebutted by {lead.rebuttedBy.length}
+                  </span>
+                )}
+              </div>
             </div>
-            {leadIntro && <p className="lead-intro">{leadIntro}</p>}
-            {lead.rebuttedBy.length > 0 && (
-              <span className="rb-inline">
-                <span className="rb-glyph" aria-hidden="true">&#8644;</span>
-                Rebutted by {lead.rebuttedBy.length}
-              </span>
-            )}
           </article>
         </Link>
       )}
@@ -233,15 +237,19 @@ export default async function HomePage() {
           <Link href={`/articles/${feature.slug}`} className="feature-card-link">
             <article className="feature-card">
               <span className="kicker">{feature.topic.name}</span>
-              <h2 className="feature-headline">{feature.headline}</h2>
-              <p className="feature-deck">{feature.deck}</p>
-              <div className="feature-meta">
-                {feature.author.name}&nbsp;·&nbsp;{fmtDate(feature.publishedAt)}&nbsp;·&nbsp;{feature.readMinutes} min
-                {feature.rebuttedBy.length > 0 && (
-                  <span className="rb-pill">&nbsp;&#8644; Rebutted</span>
-                )}
+              <div className="feature-grid">
+                <h2 className="feature-headline">{feature.headline}</h2>
+                <div className="feature-aside">
+                  <p className="feature-deck">{feature.deck}</p>
+                  <div className="feature-meta">
+                    {feature.author.name}&nbsp;·&nbsp;{fmtDate(feature.publishedAt)}&nbsp;·&nbsp;{feature.readMinutes} min
+                    {feature.rebuttedBy.length > 0 && (
+                      <span className="rb-pill">&nbsp;&#8644; Rebutted</span>
+                    )}
+                  </div>
+                  {featureIntro && <p className="feature-intro">{featureIntro}</p>}
+                </div>
               </div>
-              {featureIntro && <p className="feature-intro">{featureIntro}</p>}
             </article>
           </Link>
           <hr className="rule rule-thin" />

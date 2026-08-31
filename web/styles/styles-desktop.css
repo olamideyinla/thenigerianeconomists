@@ -151,12 +151,13 @@
     max-width: 640px;
   }
 
-  /* Pair → 4 columns for the tertiary  */
+  /* Pair → two equal columns that fill the width. (The grid items are the
+     .pair-card-link anchors, so column sizing must live on the grid, not on
+     .pair-card which is nested inside the link.) */
   .pair {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 32px;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
   }
-  .pair-card { grid-column: span 2; }
   .pair-headline { font-size: 22px; line-height: 1.18; }
 
   /* Earlier this week list — 2 columns */
@@ -303,6 +304,32 @@
 
 /* Wider — the article gets a citation side rail from 1024px up */
 @media (min-width: 1024px) {
+  /* ─── HOMEPAGE: lead + feature go two-column so the standfirst fills
+     the width instead of leaving a dead zone on the right. ─────────── */
+  .lead-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 64px;
+    align-items: start;
+    margin-top: 14px;
+  }
+  .lead-headline { font-size: 54px; line-height: 1.03; margin: 0; max-width: none; }
+  .lead-aside { align-self: start; }
+  .lead-deck { max-width: none; margin: 0 0 18px; }
+  .lead-meta { margin-top: 0; }
+  .lead-intro { max-width: none; margin-top: 16px; -webkit-line-clamp: 9; }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 56px;
+    align-items: start;
+    margin-top: 10px;
+  }
+  .feature-headline { max-width: none; margin: 0; }
+  .feature-deck { max-width: none; }
+  .feature-intro { max-width: none; }
+
   .article-shell {
     display: grid;
     grid-template-columns: minmax(0, 720px) minmax(240px, 300px);
@@ -410,7 +437,7 @@
 
 /* Even wider — slight upgrades for >= 1280px */
 @media (min-width: 1280px) {
-  .lead-headline { font-size: 66px; letter-spacing: -0.024em; }
+  .lead-headline { font-size: 60px; letter-spacing: -0.022em; }
   .article-shell {
     grid-template-columns: minmax(0, 760px) minmax(240px, 300px);
     gap: 80px;
