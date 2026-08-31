@@ -6,6 +6,7 @@ import { db } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
 import { compileMdx } from '@/lib/mdx'
+import { splitMdxAtMidpoint } from '@/lib/split-mdx'
 import { formatDate } from '@/lib/format'
 import { Byline } from '@/components/reader/Byline'
 import { COIDisclosure } from '@/components/reader/COIDisclosure'
@@ -199,8 +200,12 @@ export default async function ArticlePage({ params }: PageProps) {
   const figures = article.figures as unknown as FigureShape[]
 
   // ── Compile MDX ──────────────────────────────────────────────────
+  // Split at a mid-article section break so we can drop a newsletter CTA
+  // partway through longer pieces (not only at the very end).
 
-  const { content } = await compileMdx(article.contentMdx)
+  const [beforeMdx, afterMdx] = splitMdxAtMidpoint(article.contentMdx)
+  const { content } = await compileMdx(beforeMdx)
+  const afterContent = afterMdx ? (await compileMdx(afterMdx)).content : null
 
   // ── COI items ────────────────────────────────────────────────────
 
@@ -331,6 +336,18 @@ export default async function ArticlePage({ params }: PageProps) {
 
           {/* ── MDX body ──────────────────────────────────────── */}
           <div className="article-body">{content}</div>
+
+          {/* ── Mid-article newsletter signup (longer pieces only) ── */}
+          {afterContent && (
+            <>
+              <InlineSubscribe
+                source="ARTICLE_FOOT"
+                heading="Enjoying this piece?"
+                blurb="Get every new argument in your inbox — plus The Synthesis, our weekly briefing on the economics shaping Nigeria."
+              />
+              <div className="article-body article-body--cont">{afterContent}</div>
+            </>
+          )}
 
           {/* ── References ────────────────────────────────────── */}
           {refs.length > 0 && <ReferencesList refs={refs} />}

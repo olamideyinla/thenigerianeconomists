@@ -782,3 +782,6 @@
   font-family: var(--font-meta); font-size: 11.5px;
   color: var(--ink-faint); margin: 12px 0 0;
 }
+/* Mid-article placement: a subscribe box sitting between two body segments */
+.article-main > .inline-sub { margin: 40px 0; }
+.article-body--cont { padding-top: 0; }
