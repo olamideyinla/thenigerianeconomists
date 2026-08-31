@@ -74,29 +74,29 @@
   }
   .page > * { padding-left: var(--gutter); padding-right: var(--gutter); }
   .rule { margin-left: var(--gutter); margin-right: var(--gutter); padding: 0; }
-  .rule-thick { margin-top: 56px; margin-bottom: 56px; }
-  .rule-thin  { margin-top: 32px; margin-bottom: 32px; }
+  .rule-thick { margin-top: 40px; margin-bottom: 40px; }
+  .rule-thin  { margin-top: 26px; margin-bottom: 26px; }
 
   /* ─── HOMEPAGE on desktop ──────────────────────────────────────── */
   .issue-strip {
-    padding-top: 28px; padding-bottom: 22px;
+    padding-top: 22px; padding-bottom: 18px;
   }
   .lead-card {
-    padding-top: 56px;
-    padding-bottom: 48px;
+    padding-top: 36px;
+    padding-bottom: 32px;
   }
   .lead-headline {
-    font-size: 60px;
-    line-height: 1.02;
-    letter-spacing: -0.022em;
-    margin: 16px 0 22px;
-    max-width: 880px;
+    font-size: 48px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 14px 0 18px;
+    max-width: 820px;
   }
   .lead-deck {
-    font-size: 22px;
+    font-size: 20px;
     line-height: 1.45;
-    max-width: 640px;
-    margin: 0 0 28px;
+    max-width: 620px;
+    margin: 0 0 22px;
   }
   .lead-meta {
     padding-top: 18px;
@@ -137,16 +137,16 @@
 
   /* Feature card */
   .feature-card {
-    padding-top: 32px; padding-bottom: 32px;
+    padding-top: 20px; padding-bottom: 20px;
   }
   .feature-headline {
-    font-size: 38px;
-    line-height: 1.06;
+    font-size: 32px;
+    line-height: 1.08;
     margin: 12px 0 12px;
     max-width: 720px;
   }
   .feature-deck {
-    font-size: 19px;
+    font-size: 18px;
     margin: 0 0 16px;
     max-width: 640px;
   }
@@ -171,9 +171,9 @@
   /* News CTA full-width and centred */
   .news-cta {
     margin: 0;
-    padding: 56px var(--gutter);
+    padding: 44px var(--gutter);
   }
-  .news-cta h3 { font-size: 38px; margin: 12px 0 14px; max-width: 800px; }
+  .news-cta h3 { font-size: 32px; margin: 12px 0 14px; max-width: 800px; }
   .news-cta p  { font-size: 18px; margin: 0 0 18px; max-width: 720px; }
   .news-cta-arrow {
     font-size: 13px;
@@ -200,8 +200,8 @@
   .article-main > * { padding-left: 0; padding-right: 0; }
 
   .article-head { padding-top: 16px; }
-  .article-headline { font-size: 64px; line-height: 1.02; margin: 18px 0 22px; letter-spacing: -0.024em; }
-  .article-deck { font-size: 22px; margin-bottom: 28px; }
+  .article-headline { font-size: 48px; line-height: 1.06; margin: 16px 0 20px; letter-spacing: -0.02em; }
+  .article-deck { font-size: 21px; margin-bottom: 26px; }
   .article-kicker-row { padding-top: 24px; }
   .article-body { padding-top: 16px; }
   .article-body .article-h2 { font-size: 28px; margin-top: 36px; }
@@ -221,6 +221,11 @@
 
   /* Like bar wider */
   .like-bar { padding: 16px 0 18px; }
+
+  /* Inline newsletter signup — roomier on desktop */
+  .inline-sub { padding: 32px 32px 28px; }
+  .inline-sub-head { font-size: 28px; }
+  .inline-sub-blurb { font-size: 17px; }
 
   /* ─── SYNTHESIS ─────────────────────────────────────────────── */
   .synth-headline { font-size: 60px; line-height: 1.02; }
@@ -300,7 +305,8 @@
 @media (min-width: 1024px) {
   .article-shell {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+    grid-template-columns: minmax(0, 720px) minmax(240px, 300px);
+    justify-content: center;
     gap: 56px;
     padding: 0 48px 64px;
     align-items: start;
@@ -309,7 +315,16 @@
     min-width: 0;
     max-width: 720px;
     margin: 0;
-    justify-self: end;
+    justify-self: start;
+  }
+  /* Articles without references: no side rail, so don't reserve an empty
+     right-hand column — collapse to a single, centred measure. */
+  .article-shell.no-rail {
+    display: block;
+    padding: 0 48px 64px;
+  }
+  .article-shell.no-rail .article-main {
+    margin: 0 auto;
   }
 
   /* Citation Rail */
@@ -395,8 +410,13 @@
 
 /* Even wider — slight upgrades for >= 1280px */
 @media (min-width: 1280px) {
-  .lead-headline { font-size: 104px; letter-spacing: -0.028em; }
-  .article-shell { gap: 80px; padding: 0 64px 80px; }
+  .lead-headline { font-size: 66px; letter-spacing: -0.024em; }
+  .article-shell {
+    grid-template-columns: minmax(0, 760px) minmax(240px, 300px);
+    gap: 80px;
+    padding: 0 64px 80px;
+  }
+  .article-shell.no-rail { padding: 0 64px 80px; }
   .article-main { max-width: 760px; }
-  .article-headline { font-size: 72px; }
+  .article-headline { font-size: 56px; }
 }

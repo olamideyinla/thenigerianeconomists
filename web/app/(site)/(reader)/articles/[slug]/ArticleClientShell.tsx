@@ -32,7 +32,7 @@ export function ArticleClientShell({
   return (
     <ReferenceProvider refs={refs}>
       <FigureProvider figures={figures}>
-        <div className="article-shell">
+        <div className={refs.length === 0 ? 'article-shell no-rail' : 'article-shell'}>
           {children}
           <CitationRail refs={refs} />
         </div>

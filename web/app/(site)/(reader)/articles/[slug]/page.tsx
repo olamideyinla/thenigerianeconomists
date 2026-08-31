@@ -17,6 +17,7 @@ import { RebuttalIndicator } from '@/components/reader/RebuttalIndicator'
 import { RebuttalThread } from '@/components/reader/RebuttalThread'
 import { RebuttalAlertButton } from '@/components/reader/RebuttalAlertButton'
 import { ArticleClientShell } from './ArticleClientShell'
+import { InlineSubscribe } from '@/components/reader/InlineSubscribe'
 import { ViewTracker } from '@/components/reader/ViewTracker'
 import type { RefItem } from '@/context/ReferenceContext'
 import type { FigureShape } from '@/context/FigureContext'
@@ -152,18 +153,37 @@ export default async function ArticlePage({ params }: PageProps) {
     userName: n.user.name ?? n.user.email?.split('@')[0] ?? 'Reader',
   }))
 
-  // ── Related articles (same topic, different slug, published) ─────
+  // ── Related articles ─────────────────────────────────────────────
+  // Prefer same-topic pieces, then top up with the most recent pieces
+  // from anywhere so a reader always has somewhere to go next.
 
-  const related = await db.article.findMany({
+  const TARGET_RELATED = 4
+
+  const sameTopic = await db.article.findMany({
     where: {
       status: 'PUBLISHED',
       topicId: article.topicId,
       slug: { not: article.slug },
     },
     orderBy: { publishedAt: 'desc' },
-    take: 3,
+    take: TARGET_RELATED,
     include: { author: true, topic: true },
   })
+
+  let related = sameTopic
+  if (related.length < TARGET_RELATED) {
+    const excludeSlugs = [article.slug, ...related.map((r) => r.slug)]
+    const filler = await db.article.findMany({
+      where: {
+        status: 'PUBLISHED',
+        slug: { notIn: excludeSlugs },
+      },
+      orderBy: { publishedAt: 'desc' },
+      take: TARGET_RELATED - related.length,
+      include: { author: true, topic: true },
+    })
+    related = [...related, ...filler]
+  }
 
   // ── Shape data for contexts ──────────────────────────────────────
 
@@ -342,7 +362,7 @@ export default async function ArticlePage({ params }: PageProps) {
           {/* ── Author bio card ───────────────────────────────── */}
           <section className="author-card">
             <Link href={`/authors/${article.author.slug}`} className="ac-row">
-              {article.author.avatarUrl && (
+              {article.author.avatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={article.author.avatarUrl}
@@ -351,6 +371,10 @@ export default async function ArticlePage({ params }: PageProps) {
                   width={56}
                   height={56}
                 />
+              ) : (
+                <span className="ac-avatar ac-avatar-fallback" aria-hidden="true">
+                  {article.author.initials}
+                </span>
               )}
               <div className="ac-body">
                 <div className="ac-name">
@@ -379,11 +403,14 @@ export default async function ArticlePage({ params }: PageProps) {
 
           <hr className="rule rule-thick" />
 
-          {/* ── Related reading ───────────────────────────────── */}
+          {/* ── Keep reading ──────────────────────────────────── */}
           {related.length > 0 && (
             <section className="related">
               <header className="home-section-head">
-                <span className="kicker">Related reading</span>
+                <span className="kicker">Keep reading</span>
+                <Link href="/" className="home-section-more">
+                  All articles &#8594;
+                </Link>
               </header>
               <ul>
                 {related.map((r) => (
@@ -391,6 +418,7 @@ export default async function ArticlePage({ params }: PageProps) {
                     <Link href={`/articles/${r.slug}`}>
                       <div className="rel-kicker">{r.topic.name}</div>
                       <div className="rel-head">{r.headline}</div>
+                      {r.deck && <div className="rel-deck">{r.deck}</div>}
                       <div className="rel-meta">
                         {r.author.name}
                         {r.publishedAt
@@ -404,6 +432,11 @@ export default async function ArticlePage({ params }: PageProps) {
               </ul>
             </section>
           )}
+
+          <hr className="rule rule-thick" />
+
+          {/* ── Newsletter signup ─────────────────────────────── */}
+          <InlineSubscribe source="ARTICLE_FOOT" />
         </article>
       </ArticleClientShell>
     </div>
